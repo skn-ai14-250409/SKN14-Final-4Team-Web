@@ -119,3 +119,5 @@ EMAIL_PORT = 465  # Or your SMTP port (e.g., 465 for SSL)
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+CHAT_API_URL = os.getenv("CHAT_API_URL", "http://localhost:8000/chat")

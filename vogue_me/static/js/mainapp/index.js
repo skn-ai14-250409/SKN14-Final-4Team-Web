@@ -72,18 +72,18 @@ const firstReaction = resp => {
     else            return resp.json();
 }
 const secondReaction = json => addChat(json);
-const sendQuery = (msg) => {
-    const csrf = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-    fetch(ASK_API_URL, {
+const sendQuery = (msg) => {    fetch("http://localhost:8000/chat", {
         method  : "POST",
-        mode    : "cors",
-        cache   : "no-cache",
-        credentials: "same-origin",
-        headers : { "Content-Type": "application/json", "X-CSRFToken" : csrf },
-        body: JSON.stringify({msg:msg}),
+        headers : { "Content-Type": "application/json" },
+
+        body: JSON.stringify({ message: msg }),   // ← msg → message로 보냄
     })
     .then(firstReaction)
-    .then(secondReaction);
+    .then(secondReaction)
+    .catch(err => {
+        console.error(err);
+        addChat({ type: "ai", msg1: "서버 연결에 실패했어요." });
+    });
 }
 
 const $userInput = document.querySelector(".user_input");

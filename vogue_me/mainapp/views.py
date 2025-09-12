@@ -12,6 +12,8 @@ from mainapp.models.search_history_product import SearchHistoryProduct
 
 from mainapp.models.influencer import Influencer
 
+from django.conf import settings
+from django.shortcuts import render
 
 @login_required
 def index(request):
@@ -31,6 +33,7 @@ def index(request):
         "name"  : last_ai.name,
         "image" : last_ai.profile_img_url,
         "voice" : last_ai.voice_info,
+        "chat_api_url": settings.CHAT_API_URL,
     }
 
     return render(request, "app/mainapp/index.html", context)
