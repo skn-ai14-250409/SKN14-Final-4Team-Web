@@ -157,6 +157,7 @@
             "name"  : "{{ user.first_name }}"
         };
         const ASK_API_URL = "{% url "apiapp:ask_api" %}";
+        window.CHAT_API_URL = "{{ chat_api_url }}";
     </script>
     <script src="{% static "js/mainapp/index.js" %}"></script>
 {% endblock script %}
