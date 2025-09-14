@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>진경 AI 어시스턴트</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 375px;
+            height: 100vh;
+            max-height: 812px;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+
+        /* 모바일 (기본) */
+        @media (max-width: 767px) {
+            body {
+                padding: 0;
+            }
+            
+            .phone-container {
+                width: 100vw;
+                height: 100vh;
+                max-width: none;
+                max-height: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+
+        /* 태블릿 */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .phone-container {
+                max-width: 400px;
+                max-height: 850px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 1024px) {
+            .phone-container {
+                max-width: 420px;
+                max-height: 900px;
+            }
+        }
+
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #333;
+            margin: 4px 0;
+            border-radius: 1px;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .profile-info .status {
+            font-size: 12px;
+            color: #10c469;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #10c469;
+            border-radius: 50%;
+        }
+
+        .dropdown-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Chat Content */
+        .chat-content {
+            padding: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 0;
+            flex: 1;
+        }
+
+        .welcome-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid #10c469;
+            flex: 1;
+        }
+
+        .welcome-timestamp {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .welcome-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .highlight {
+            color: #10c469;
+            font-weight: 600;
+        }
+
+
+
+
+
+
+
+        /* Messages */
+        #messagesContainer {
+            overflow-x: hidden;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .message.user {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .message.ai {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: flex-start;
+            gap: 8px;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 16px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-bubble {
+            background: #10c469;
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .message.ai .message-bubble {
+            background: #f0f2f5;
+            color: #333;
+            border-bottom-left-radius: 6px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: flex-end;
+            margin-top: 0;
+            line-height: 1;
+        }
+
+        /* Product container가 있을 때 message 레이아웃 조정 */
+        .message.user:has(.product-container) {
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .message.ai:has(.product-container) {
+            flex-direction: row;
+            align-items: flex-end;
+        }
+
+        .message.user:has(.product-container) .message-bubble {
+            margin-bottom: 8px;
+        }
+
+        .message.user:has(.product-container) .message-time {
+            margin-bottom: 8px;
+        }
+
+        /* Product Cards - Horizontal Scroll Container */
+        .product-container {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd transparent;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        .product-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .product-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .product-container::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .product-container::-webkit-scrollbar-thumb:hover {
+            background: #bbb;
+        }
+
+        .product-card {
+            flex: 0 0 auto;
+            width: 200px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            min-height: 250px;
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ff4757;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .heart-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .heart-icon.liked {
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .heart-icon.unliked {
+            color: #666;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+        }
+
+        .product-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 20px 16px 16px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-description {
+            font-size: 12px;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .typing-indicator.show {
+            display: flex;
+        }
+
+        .typing-bubble {
+            background: #f0f2f5;
+            padding: 12px 16px;
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Input Area */
+        .input-area {
+            padding: 16px 16px 32px;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8f9fa;
+            border-radius: 24px;
+            padding: 14px 18px;
+            min-height: 48px;
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            color: #333;
+            outline: none;
+            font-family: 'Pretendard', sans-serif;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .input-field::placeholder {
+            color: #999;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .send-button {
+            width: 32px;
+            height: 32px;
+            background: #10c469;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .send-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .send-button:hover {
+            background: #0ea758;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes wave {
+            0%, 100% { height: 8px; }
+            50% { height: 20px; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-8px); }
+        }
+
+        .wave-bar:nth-child(1) { height: 12px; animation: wave 1.5s infinite; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 8px; animation: wave 1.5s infinite; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 16px; animation: wave 1.5s infinite; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 10px; animation: wave 1.5s infinite; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 14px; animation: wave 1.5s infinite; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 8px; animation: wave 1.5s infinite; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 18px; animation: wave 1.5s infinite; animation-delay: 0.6s; }
+        .wave-bar:nth-child(8) { height: 12px; animation: wave 1.5s infinite; animation-delay: 0.7s; }
+        .wave-bar:nth-child(9) { height: 10px; animation: wave 1.5s infinite; animation-delay: 0.8s; }
+        .wave-bar:nth-child(10) { height: 16px; animation: wave 1.5s infinite; animation-delay: 0.9s; }
+        .wave-bar:nth-child(11) { height: 8px; animation: wave 1.5s infinite; animation-delay: 1s; }
+        .wave-bar:nth-child(12) { height: 14px; animation: wave 1.5s infinite; animation-delay: 1.1s; }
+
+        /* Header Controls */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .voice-control-btn {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .voice-control-btn:hover {
+            background: #f0f0f0;
+            color: #10c469;
+        }
+
+        .voice-control-btn.active {
+            background: #10c469;
+            color: white;
+        }
+
+        .voice-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+
+
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .phone-container {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="profile-section">
+                <div class="profile-image">
+                    <img src="data:image/jpeg;base64,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" alt="AI 어시스턴트 진경">
+                </div>
+                <div class="profile-info">
+                    <h3>진경</h3>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        Active now
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <button class="voice-control-btn" onclick="toggleGlobalVoice()" title="음성 자동재생">
+                    <svg class="voice-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                </button>
+            <div class="dropdown-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 10l5 5 5-5z"/>
+                </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Content -->
+        <div class="chat-content" id="chatContent">
+            <div class="welcome-container">
+            <div class="welcome-message">
+                <div class="welcome-text">
+                        안녕하세요 <span class="highlight" id="userNickname">지훈님🌿</span> 다시 만나 반가워요!
+                </div>
+                <div class="welcome-text">
+                        방금 알려주신 취향과 스타일 키워드를 바탕으로, 앞으로 <id="userNickname">지훈님만의 지구를 지키는 패션 추천을 준비해뒀어요.
+                </div>
+                <div class="welcome-text">
+                         👉 지금 바로 "주말 데이트에 어울리는 캐주얼룩 추천해줘"처럼 말씀해주시면, 제가 취향에 맞춰 스타일을 보여드릴 수 있어요.
+                </div>
+                <div class="welcome-text highlight">
+                        어떤 상황에 입을 옷이 궁금하세요? ✨
+                </div>
+            </div>
+                <div class="welcome-timestamp">09:25 AM</div>
+            </div>
+
+
+            <!-- Messages Container -->
+            <div id="messagesContainer">
+                <!-- Messages will be added here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-bubble">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-container">
+                {% csrf_token %}
+                <input 
+                    type="text" 
+                    class="input-field" 
+                    id="messageInput"
+                    placeholder="원하는 상황을 알려주세요. (예: 가을 출근룩)"
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-button" onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 현재 시간 포맷팅
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            return `${displayHours}:${minutes} ${ampm}`;
+        }
+
+        // 메시지 추가 함수
+        function addMessage(text, isUser = true, hasProducts = false) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            
+            const currentTime = getCurrentTime();
+            
+            let messageContent;
+            if (isUser) {
+                messageContent = `
+                    <div class="message-time">${currentTime}</div>
+                    <div class="message-bubble">${text}</div>
+                `;
+            } else {
+                let bubbleContent = text;
+                if (hasProducts) {
+                    bubbleContent += `
+                        <div class="product-container">
+                            <div class="product-card" onclick="selectProduct('top')">
+                                <div class="product-image" style="background-image: url('https://ecoalf.com/cdn/shop/files/MCMGASRMALIB0725S25-125_0654_verde.jpg?v=1738937341'); background-size: cover; background-position: center;"></div>
+                                    <div class="heart-icon unliked" onclick="toggleHeart(this)">🤍</div>
+                                    <div class="product-info">
+                                    <div class="product-title">클래식 셔츠</div>
+                                    <div class="product-description">단정한 오피스룩</div>
+                                </div>
+                            </div>
+                            <div class="product-card" onclick="selectProduct('bottom')">
+                                <div class="product-image" style="background-image: url('https://ecoalf.com/cdn/shop/files/MCMGAPAETHIC0753S25-143_0555.jpg?v=1738239393'); background-size: cover; background-position: center;"></div>
+                                    <div class="heart-icon unliked" onclick="toggleHeart(this)">🤍</div>
+                                    <div class="product-info">
+                                        <div class="product-title">슬랙스</div>
+                                        <div class="product-description">깔끔고 활동성 높은 라이 사이즈 솔원 룩</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `;
+                }
+                messageContent = `
+                    <div class="message-bubble">${bubbleContent}</div>
+                    <div class="message-time">${currentTime}</div>
+                `;
+            }
+            
+            messageDiv.innerHTML = messageContent;
+            
+            messagesContainer.appendChild(messageDiv);
+            
+            // 새로 생성된 product-container에 스크롤 이벤트 적용
+            const newProductContainer = messageDiv.querySelector('.product-container');
+            if (newProductContainer) {
+                setupProductContainerScroll(newProductContainer);
+            }
+            
+            scrollToBottom();
+        }
+
+        // 제품 선택 함수
+        function selectProduct(productType) {
+            const productNames = {
+                'top': '클래식 셔츠',
+                'bottom': '슬랙스'
+            };
+            
+            addMessage(`${productNames[productType]}을 선택하셨네요! 좋은 선택이에요.`, true);
+            
+            setTimeout(() => {
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    addMessage("더 자세한 코디 정보나 다른 상황별 추천이 필요하시면 언제든 말씀해주세요! 😊", false);
+                }, 1500);
+            }, 500);
+        }
+
+        // AI 응답 시뮬레이션
+        function simulateAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('30대') || message.includes('오피스룩') || message.includes('출근')) {
+                return {
+                    text: "지훈님께 어울리는 가을 오피스룩 2가지를 추천해드려요! 스타일도 놓치지 않는 직장인 센리어에요 🏢",
+                    hasProducts: true
+                };
+            } else if (message.includes('데이트') || message.includes('연인')) {
+                return {
+                    text: "로맨틱한 데이트룩을 추천드릴게요! 상대방에게 좋은 인상을 남길 수 있는 스타일들이에요 💕",
+                    hasProducts: true
+                };
+            } else if (message.includes('캐주얼') || message.includes('편안한')) {
+                return {
+                    text: "편안하면서도 세련된 캐주얼룩을 준비했어요! 일상에서 자연스럽게 입을 수 있는 스타일입니다 ✨",
+                    hasProducts: true
+                };
+            } else {
+                const responses = [
+                    "좋은 질문이에요! 상황에 맞는 스타일을 추천드릴게요. 어떤 분위기의 옷을 원하시나요?",
+                    "네, 도와드릴게요! 더 구체적인 상황이나 선호하는 색상이 있으신가요?",
+                    "멋진 선택이에요! 해당 상황에 어울리는 몇 가지 옵션을 제안해드릴게요.",
+                    "이해했어요! 날씨나 특별한 요구사항이 있으시면 알려주세요.",
+                    "좋아요! 스타일링 추천을 위해 더 자세한 정보를 알려주시면 완벽한 코디를 제안해드릴게요! ✨"
+                ];
+                return {
+                    text: responses[Math.floor(Math.random() * responses.length)],
+                    hasProducts: false
+                };
+            }
+        }
+
+        // 타이핑 인디케이터 표시/숨김
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('show');
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('show');
+        }
+
+        // 스크롤을 최하단으로
+        function scrollToBottom() {
+            const chatContent = document.getElementById('chatContent');
+            setTimeout(() => {
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }, 100);
+        }
+
+        // 메시지 전송 함수
+        const $csrf  = document.getElementsByName("csrfmiddlewaretoken")[0];
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+            
+            if (messageText === '') return;
+            
+            // 사용자 메시지 추가
+            addMessage(messageText, true);
+            messageInput.value = '';
+            
+            // AI 응답 시뮬레이션
+            showTypingIndicator();
+
+            {#fetch("http://looplabel-api.ap-northeast-2.elasticbeanstalk.com/api/ask", {#}
+            fetch("http://www.local.com:80/api/ask", {
+                method : "POST",
+                cache  : "no-cache",
+                headers: { "Content-Type": "application/json", "X-CSRFToken": $csrf.value },
+                body: JSON.stringify({ query : messageText, user_id : {% if user.is_authenticated %}{{ user.id }}{% else %}1{% endif %} })
+            }).then(resp => { return resp.text();
+            }).then(text => {
+                hideTypingIndicator();
+                addMessage(text, false)
+            })
+
+            /*
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = simulateAIResponse(messageText);
+                addMessage(response.text, false, response.hasProducts);
+
+                // AI 메시지 생성 후 자동으로 음성 스트리밍 재생 (전역 설정이 켜져있을 때만)
+                if (globalVoiceEnabled) {
+                    setTimeout(() => {
+                        startVoiceStreaming();
+                    }, 500);
+                }
+            }, 1500 + Math.random() * 1000);
+            */
+        }
+
+        // 음성 스트리밍 시작 (백그라운드에서 자동 재생)
+        function startVoiceStreaming() {
+            // 기존 음성 스트리밍 정지
+            stopVoiceStreaming();
+            
+            // 음성 스트리밍 시작 (시뮬레이션)
+            console.log('🎵 AI 음성 스트리밍 시작');
+            
+            // 시뮬레이션: 3초 후 자동 정지
+            setTimeout(() => {
+                stopVoiceStreaming();
+            }, 3000);
+        }
+
+        // 음성 스트리밍 정지
+        function stopVoiceStreaming() {
+            console.log('🔇 AI 음성 스트리밍 정지');
+        }
+
+        // 전역 음성 자동재생 토글
+        let globalVoiceEnabled = true;
+        
+        function toggleGlobalVoice() {
+            globalVoiceEnabled = !globalVoiceEnabled;
+            const voiceBtn = document.querySelector('.voice-control-btn');
+            
+            if (globalVoiceEnabled) {
+                voiceBtn.classList.add('active');
+                voiceBtn.title = '음성 자동재생 켜짐';
+            } else {
+                voiceBtn.classList.remove('active');
+                voiceBtn.title = '음성 자동재생 꺼짐';
+                stopVoiceStreaming();
+            }
+        }
+
+        // 페이지 로드 시 전역 음성 버튼 활성화
+        document.addEventListener('DOMContentLoaded', function() {
+            const voiceBtn = document.querySelector('.voice-control-btn');
+            if (voiceBtn) {
+                voiceBtn.classList.add('active');
+            }
+        });
+
+        // 하트 아이콘 토글 함수
+        function toggleHeart(heartIcon) {
+            // 이벤트 전파 방지 (product-card 클릭 이벤트와 충돌 방지)
+            event.stopPropagation();
+            
+            if (heartIcon.classList.contains('unliked')) {
+                // 좋아요 설정 (회색 → 빨간)
+                heartIcon.classList.remove('unliked');
+                heartIcon.classList.add('liked');
+                heartIcon.textContent = '❤️';
+            } else {
+                // 좋아요 해제 (빨간 → 회색)
+                heartIcon.classList.remove('liked');
+                heartIcon.classList.add('unliked');
+                heartIcon.textContent = '🤍';
+            }
+        }
+
+        // 엔터 키 처리
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Product container 스크롤 이벤트 설정
+        function setupProductContainerScroll(container) {
+            // 가로 스크롤만 처리하고 세로 스크롤은 chat-content로 전파
+            container.addEventListener('wheel', function(e) {
+                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                    // 가로 스크롤만 처리
+                    e.stopPropagation();
+            } else {
+                    // 세로 스크롤은 chat-content로 전파
+                    const chatContent = document.getElementById('chatContent');
+                    if (chatContent) {
+                        chatContent.scrollTop += e.deltaY;
+                        e.preventDefault();
+                    }
+                }
+            }, { passive: false });
+        }
+
+        // Product container 스크롤 이벤트 처리
+        function preventScrollPropagation() {
+            const productContainers = document.querySelectorAll('.product-container');
+            productContainers.forEach(container => {
+                setupProductContainerScroll(container);
+            });
+        }
+
+        // DOM 로드 후 스크롤 이벤트 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            preventScrollPropagation();
+        });
+
+        // 초기 샘플 메시지 제거 - welcome-message만 표시
+    </script>
+</body>
+</html>

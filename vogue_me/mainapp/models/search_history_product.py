@@ -8,12 +8,13 @@
 from django.db import models
 
 from .product import AppProduct
+from .search_history import SearchHistory
 
 
 class SearchHistoryProduct(models.Model):
-    search_id = models.IntegerField(blank=True, null=True)
-    product = models.ForeignKey(AppProduct, on_delete=models.CASCADE)
+    search = models.ForeignKey(SearchHistory, on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey(AppProduct, on_delete=models.CASCADE, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'search_history_product'

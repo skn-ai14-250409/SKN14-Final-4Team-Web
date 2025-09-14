@@ -16,5 +16,5 @@ class SearchHistory(models.Model):
     searched_at     = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'search_history'

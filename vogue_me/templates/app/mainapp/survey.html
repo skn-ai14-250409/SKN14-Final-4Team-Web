@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>진경 AI 어시스턴트 온보딩</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <style>
         * {
             margin: 0;
@@ -12,40 +13,142 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: "Pretendard Variable", Pretendard;
+            background: #F2F7FB;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
+            overflow: hidden;
         }
 
         .container {
-            max-width: 400px;
             width: 100%;
+            max-width: 375px; /* 모바일 기본 사이즈 */
             position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* 태블릿 사이즈 (768px 이상) */
+        @media (min-width: 768px) {
+            body {
+                padding: 24px;
+            }
+            
+            .container {
+                max-width: 400px;
+            }
+        }
+
+        /* 데스크톱 사이즈 (1024px 이상) */
+        @media (min-width: 1024px) {
+            body {
+                padding: 32px;
+            }
+            
+            .container {
+                max-width: 420px;
+            }
         }
 
         .ai-card {
             background: #3a4a5c;
             border-radius: 20px;
-            padding: 20px;
+            padding: 12px;
             text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 0;
+            width: 100%;
+            max-width: 240px;
+            height: 280px;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* 태블릿에서 AI 카드 크기 조정 */
+        @media (min-width: 768px) {
+            .ai-card {
+                max-width: 260px;
+                height: 300px;
+                padding: 14px;
+            }
+        }
+
+        /* 데스크톱에서 AI 카드 크기 조정 */
+        @media (min-width: 1024px) {
+            .ai-card {
+                max-width: 280px;
+                height: 320px;
+                padding: 16px;
+            }
+        }
+
+        .ai-card::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            height: 35px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, transparent 80%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        /* 태블릿에서 타원형 그림자 크기 조정 */
+        @media (min-width: 768px) {
+            .ai-card::after {
+                width: 340px;
+            }
+        }
+
+        /* 데스크톱에서 타원형 그림자 크기 조정 */
+        @media (min-width: 1024px) {
+            .ai-card::after {
+                width: 360px;
+            }
         }
 
         .profile-image {
-            width: 120px;
-            height: 120px;
-            border-radius: 15px;
+            width: 210px;
+            height: 210px;
+            border-radius: 20px;
             background: #d4c4a8;
-            margin: 0 auto 15px;
+            margin: 0 auto 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* 태블릿에서 프로필 이미지 크기 조정 */
+        @media (min-width: 768px) {
+            .profile-image {
+                width: 230px;
+                height: 230px;
+                border-radius: 22px;
+            }
+        }
+
+        /* 데스크톱에서 프로필 이미지 크기 조정 */
+        @media (min-width: 1024px) {
+            .profile-image {
+                width: 250px;
+                height: 250px;
+                border-radius: 24px;
+            }
         }
 
         .profile-image img {
@@ -56,12 +159,13 @@
 
         .ai-name {
             color: white;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 5px;
+            margin-bottom: 0;
         }
 
         .leaf-icon {
@@ -70,15 +174,37 @@
         }
 
         .play-button {
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
             background: rgba(255,255,255,0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 20px auto 0;
+            margin: 0;
             cursor: pointer;
+        }
+
+        .ai-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 210px;
+            margin-top: 5px;
+        }
+
+        /* 태블릿에서 ai-info 너비 조정 */
+        @media (min-width: 768px) {
+            .ai-info {
+                width: 230px;
+            }
+        }
+
+        /* 데스크톱에서 ai-info 너비 조정 */
+        @media (min-width: 1024px) {
+            .ai-info {
+                width: 250px;
+            }
         }
 
         .play-button::before {
@@ -92,81 +218,110 @@
         }
 
         .survey-card {
-            background: linear-gradient(135deg, #48cc6c 0%, #2dd4bf 100%);
+            background: #3CAA92;
             border-radius: 25px;
-            padding: 30px 25px;
+            padding: 25px 25px;
             color: white;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width: 100%;
+            height: calc(100vh - 320px);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 태블릿에서 설문 카드 패딩 조정 */
+        @media (min-width: 768px) {
+            .survey-card {
+                padding: 28px 28px;
+                height: calc(100vh - 340px);
+            }
+        }
+
+        /* 데스크톱에서 설문 카드 패딩 조정 */
+        @media (min-width: 1024px) {
+            .survey-card {
+                padding: 32px 32px;
+                height: calc(100vh - 360px);
+            }
         }
 
         .survey-card.complete {
-            background: linear-gradient(135deg, #fbbf24 0%, #48cc6c 100%);
-        }
-
-        .close-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            opacity: 0.7;
-        }
-
-        .close-button::before,
-        .close-button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 2px;
-            background: white;
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-
-        .close-button::after {
-            transform: translate(-50%, -50%) rotate(-45deg);
+            background: linear-gradient(90deg, #F4D35E 0%, #20A090 100%);
         }
 
         .progress-bar {
             width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 2px;
-            margin-bottom: 25px;
-            overflow: hidden;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 2px;
+            padding: 2px;
         }
 
-        .progress-fill {
+        .progress-segment {
+            flex: 1;
             height: 100%;
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+        }
+
+        .progress-segment.filled {
             background: white;
-            transition: width 0.3s ease;
+            height: 4px;
         }
 
         .survey-title {
-            font-size: 18px;
+            font-size: 17px;
             line-height: 1.4;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-weight: 500;
+        }
+
+        /* 태블릿에서 텍스트 크기 조정 */
+        @media (min-width: 768px) {
+            .survey-title {
+                font-size: 18px;
+            }
+            
+            .option-button {
+                font-size: 16px;
+                padding: 16px 20px;
+            }
+        }
+
+        /* 데스크톱에서 텍스트 크기 조정 */
+        @media (min-width: 1024px) {
+            .survey-title {
+                font-size: 19px;
+            }
+            
+            .option-button {
+                font-size: 17px;
+                padding: 18px 22px;
+            }
         }
 
         .option-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 30px;
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
         .option-button {
             background: rgba(255,255,255,0.15);
             border: 2px solid rgba(255,255,255,0.3);
             color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            font-size: 16px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
@@ -174,7 +329,7 @@
 
         .option-button.selected {
             background: white;
-            color: #48cc6c;
+            color: #0B1220;
             border-color: white;
             font-weight: 600;
         }
@@ -191,8 +346,11 @@
 
         .button-group {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
+            gap: 9px;
+            margin-top: auto;
+            flex-shrink: 0;
         }
 
         .nav-button {
@@ -213,7 +371,7 @@
 
         .next-button {
             background: white;
-            color: #48cc6c;
+            color: #0B1220;
         }
 
         .prev-button:hover {
@@ -225,20 +383,33 @@
             transform: translateY(-2px);
         }
 
+        .complete-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
         .complete-icon {
             font-size: 48px;
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
 
         .complete-title {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 0;
         }
 
         .complete-subtitle {
             font-size: 16px;
             margin-bottom: 10px;
+        }
+
+        /* SurveyComplete의 prev-button에만 더 넓은 크기 적용 */
+        #surveyComplete .prev-button {
+            padding: 12px 30px;
+            white-space: nowrap;
         }
 
         .complete-message {
@@ -269,7 +440,7 @@
 
         .final-button {
             background: white;
-            color: #48cc6c;
+            color: #0B1220;
             padding: 15px 30px;
             border: none;
             border-radius: 25px;
@@ -288,7 +459,7 @@
             display: none;
         }
 
-        /* 애니메이션 */
+        /* 기본 애니메이션 */
         .survey-card {
             animation: slideUp 0.4s ease-out;
         }
@@ -303,6 +474,160 @@
                 transform: translateY(0);
             }
         }
+
+        /* Survey1 특별 애니메이션 - 카드 reveal 후에 나타남 */
+        #survey1 {
+            opacity: 0;
+            animation: slideUpFromBottom 0.8s ease-out 2.5s both;
+        }
+
+        @keyframes slideUpFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(100vh);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* AI 카드 프로필 이미지 카드 reveal 애니메이션 (Survey1에서만) */
+        .ai-card .profile-image {
+            animation: cardReveal 2s ease-in-out 0.5s;
+        }
+
+        @keyframes cardReveal {
+            0% {
+                transform: rotateY(0deg) scale(0.8);
+                filter: grayscale(100%) brightness(0.3);
+                opacity: 0.5;
+            }
+            25% {
+                transform: rotateY(90deg) scale(0.9);
+                filter: grayscale(75%) brightness(0.5);
+                opacity: 0.7;
+            }
+            50% {
+                transform: rotateY(180deg) scale(1);
+                filter: grayscale(50%) brightness(0.7);
+                opacity: 0.9;
+            }
+            75% {
+                transform: rotateY(270deg) scale(1.05);
+                filter: grayscale(25%) brightness(0.9);
+                opacity: 1;
+            }
+            100% {
+                transform: rotateY(360deg) scale(1);
+                filter: grayscale(0%) brightness(1);
+                opacity: 1;
+            }
+        }
+
+        /* AI 카드 전체 등장 애니메이션 */
+        .ai-card {
+            animation: fadeInScale 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 폭죽 애니메이션 - 카드 축하 효과 제거 */
+        .survey-card.complete {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        /* 폭죽 파티클 효과 - 화려하게 업그레이드 */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 1.5s linear forwards;
+            box-shadow: 0 0 6px rgba(255, 107, 107, 0.6);
+        }
+
+        .confetti:nth-child(2n) {
+            background: #4ecdc4;
+            animation-delay: 0.2s;
+            box-shadow: 0 0 6px rgba(78, 205, 196, 0.6);
+        }
+
+        .confetti:nth-child(3n) {
+            background: #45b7d1;
+            animation-delay: 0.4s;
+            box-shadow: 0 0 6px rgba(69, 183, 209, 0.6);
+        }
+
+        .confetti:nth-child(4n) {
+            background: #f9ca24;
+            animation-delay: 0.6s;
+            box-shadow: 0 0 6px rgba(249, 202, 36, 0.6);
+        }
+
+        .confetti:nth-child(5n) {
+            background: #f0932b;
+            animation-delay: 0.8s;
+            box-shadow: 0 0 6px rgba(240, 147, 43, 0.6);
+        }
+
+        .confetti:nth-child(6n) {
+            background: #eb4d4b;
+            animation-delay: 1s;
+            box-shadow: 0 0 6px rgba(235, 77, 75, 0.6);
+        }
+
+        .confetti:nth-child(7n) {
+            background: #6c5ce7;
+            animation-delay: 1.2s;
+            box-shadow: 0 0 6px rgba(108, 92, 231, 0.6);
+        }
+
+        .confetti:nth-child(8n) {
+            background: #00d2d3;
+            animation-delay: 1.4s;
+            box-shadow: 0 0 6px rgba(0, 210, 211, 0.6);
+        }
+
+        .confetti:nth-child(9n) {
+            background: #ff9ff3;
+            animation-delay: 1.6s;
+            box-shadow: 0 0 6px rgba(255, 159, 243, 0.6);
+        }
+
+        .confetti:nth-child(10n) {
+            background: #54a0ff;
+            animation-delay: 1.8s;
+            box-shadow: 0 0 6px rgba(84, 160, 255, 0.6);
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0.8;
+            }
+            30% {
+                transform: translateY(120px) rotate(45deg) scale(1);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(240px) rotate(90deg) scale(0.9);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(400px) rotate(180deg) scale(0.6);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -310,24 +635,29 @@
         <!-- AI 프로필 카드 -->
         <div class="ai-card">
             <div class="profile-image">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23d4c4a8'/%3E%3Ccircle cx='35' cy='40' r='3' fill='%23333'/%3E%3Ccircle cx='65' cy='40' r='3' fill='%23333'/%3E%3Cpath d='M35 60 Q50 70 65 60' stroke='%23333' stroke-width='2' fill='none'/%3E%3C/svg%3E" alt="AI 어시스턴트 진경">
+                <img src="data:image/jpeg;base64,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" alt="AI 어시스턴트 진경">
             </div>
+            <div class="ai-info">
             <div class="ai-name">
                 진경 <span class="leaf-icon">🌿</span>
             </div>
             <div class="play-button"></div>
+            </div>
         </div>
 
         <!-- 서베이 1: 초기 소개 -->
         <div id="survey1" class="survey-card">
-            <div class="close-button"></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 16.6%"></div>
+                <div class="progress-segment filled"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
             </div>
             <div class="survey-title">
                 안녕하세요! 저는 재활용 소재로 스타일을 제안하는 LoopLabel AI 어시스턴트 진경이에요.<br><br>
-                처구를 치치면서도 맛스러운 패션을 함께 찾아드릴게요. ✨<br><br>
-                이제 몇 가지 질문으로 당신의 취향을 알아가 볼게요. 아래 [설문 시작하기] 버튼을 눌러 시작해볼까요?
+                지구를 지키면서도 멋스러운 패션을 함께 찾아드릴게요. ✨<br><br>
+                이제 몇 가지 질문으로 당신의 취향을 알아가 볼게요. [설문 시작하기] 버튼을 눌러 시작해볼까요?
             </div>
             <div class="button-group">
                 <div></div>
@@ -337,9 +667,12 @@
 
         <!-- 서베이 2: 성별 -->
         <div id="survey2" class="survey-card hidden">
-            <div class="close-button"></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 33.3%"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
             </div>
             <div class="survey-title">
                 먼저, 어떤 옷 스타일을 주로 찾으세요?
@@ -356,9 +689,12 @@
 
         <!-- 서베이 3: 연령대 -->
         <div id="survey3" class="survey-card hidden">
-            <div class="close-button"></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 50%"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
             </div>
             <div class="survey-title">
                 연령대를 알려주시면, 더 잘 맞는 스타일을 제안드릴 수 있어요.
@@ -376,9 +712,12 @@
 
         <!-- 서베이 4: 스타일 가이드 -->
         <div id="survey4" class="survey-card hidden">
-            <div class="close-button"></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 66.6%"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
             </div>
             <div class="survey-title">
                 평소 좋아하는 스타일 키워드를 골라주세요.
@@ -398,9 +737,12 @@
 
         <!-- 서베이 5: 선호하는 소재 -->
         <div id="survey5" class="survey-card hidden">
-            <div class="close-button"></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 83.3%"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
             </div>
             <div class="survey-title">
                 특별히 선호하는 소재가 있나요?
@@ -419,19 +761,24 @@
 
         <!-- 서베이 완료 -->
         <div id="surveyComplete" class="survey-card complete hidden">
-            <div class="close-button"></div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 100%"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
             </div>
+            <div class="complete-header">
             <div class="complete-icon">🎉</div>
             <div class="complete-title">설문 완료!</div>
+            </div>
             <div class="complete-subtitle">
-                우리 더 친해지려면, 제가 뭐라고 불러드리면 좋을까요? 😍
+                우리 더 친해지려면, 제가 뭐라고 불러드리면 좋을까요?
             </div>
             <div class="complete-message">
-                닉네임을 입력하면 바로 대화가 이어져요!
+                닉네임을 입력하면 바로 대화가 이어져요 😍
             </div>
-            <input type="text" class="input-field" placeholder="여기 닉네임을 적어주세요. 💚">
+            <input type="text" class="input-field" placeholder="닉네임을 알려주세요 💚">
             <div class="button-group">
                 <button class="nav-button prev-button" onclick="prevSurvey()">나중에</button>
                 <button class="final-button" onclick="completeSurvey()">완료</button>
@@ -443,67 +790,242 @@
         let currentSurvey = 1;
         const totalSurveys = 6; // 완료 화면 포함
 
+        function updateProgressBar() {
+            // 모든 progress segment에서 filled 클래스 제거
+            document.querySelectorAll('.progress-segment').forEach(segment => {
+                segment.classList.remove('filled');
+            });
+            
+            // 현재 survey에 맞게 filled 클래스 추가
+            const currentCard = document.getElementById(`survey${currentSurvey}`) || document.getElementById('surveyComplete');
+            if (currentCard) {
+                const progressSegments = currentCard.querySelectorAll('.progress-segment');
+                // 현재 페이지 번호만큼 filled 클래스 추가
+                for (let i = 0; i < currentSurvey; i++) {
+                    if (progressSegments[i]) {
+                        progressSegments[i].classList.add('filled');
+                    }
+                }
+            }
+        }
+
+        function createConfetti() {
+            const surveyCard = document.querySelector('#surveyComplete');
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#00d2d3', '#ff9ff3', '#54a0ff'];
+            
+            if (!surveyCard) return;
+            
+            // survey-card의 위치와 크기 정보 가져오기
+            const cardRect = surveyCard.getBoundingClientRect();
+            const cardLeft = cardRect.left;
+            const cardWidth = cardRect.width;
+            const cardTop = cardRect.top;
+            const cardHeight = cardRect.height;
+            
+            // 잔잔한 파티클 개수로 조정 (양 늘림)
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // survey-card 영역 내에서만 랜덤하게 분산
+                const randomLeft = cardLeft + Math.random() * cardWidth;
+                const randomTop = cardTop + Math.random() * (cardHeight * 0.2); // 상단 20% 영역에서 시작
+                
+                confetti.style.position = 'fixed';
+                confetti.style.left = randomLeft + 'px';
+                confetti.style.top = randomTop + 'px';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.background = color;
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = '2s';
+                confetti.style.animationTimingFunction = 'ease-out';
+                
+                // 작고 잔잔한 크기
+                const size = Math.random() * 3 + 4; // 4px ~ 7px
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                
+                // 부드러운 모양 (원형 위주)
+                const shapes = ['border-radius: 50%', 'border-radius: 50%', 'border-radius: 0', 'border-radius: 50%'];
+                const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.cssText += randomShape;
+                
+                // 부드러운 글로우 효과
+                confetti.style.boxShadow = `0 0 4px ${color}60, 0 0 8px ${color}30`;
+                
+                document.body.appendChild(confetti);
+                
+                // 2.5초 후 파티클 제거
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
+                }, 2500);
+            }
+        }
+
         function nextSurvey() {
+            // Survey 1은 선택 검증 없이 진행
+            if (currentSurvey === 1) {
+                if (currentSurvey < totalSurveys) {
+                    document.getElementById(`survey${currentSurvey}`).classList.add('hidden');
+                    currentSurvey++;
+                    updateProgressBar();
+                    
+                    if (currentSurvey === totalSurveys) {
+                        document.getElementById('surveyComplete').classList.remove('hidden');
+                        setTimeout(() => {
+                            createConfetti();
+                        }, 1000);
+                    } else {
+                        document.getElementById(`survey${currentSurvey}`).classList.remove('hidden');
+                        updateNextButton(); // 새 페이지의 버튼 상태 업데이트
+                    }
+                }
+                return;
+            }
+            
+            // Survey 2-5: 선택 검증
+            const currentCard = document.querySelector('.survey-card:not(.hidden)');
+            const selectedOptions = currentCard.querySelectorAll('.option-button.selected');
+            
+            if (selectedOptions.length === 0) {
+                alert('옵션을 선택해주세요!');
+                return;
+            }
+            
             if (currentSurvey < totalSurveys) {
                 // 현재 서베이 숨기기
                 document.getElementById(`survey${currentSurvey}`).classList.add('hidden');
                 
                 currentSurvey++;
                 
+                // progress bar 업데이트
+                updateProgressBar();
+                
                 // 다음 서베이 보이기
                 if (currentSurvey === totalSurveys) {
                     document.getElementById('surveyComplete').classList.remove('hidden');
+                    // 완료 페이지에서 폭죽 효과 시작
+                    setTimeout(() => {
+                        createConfetti();
+                    }, 1000);
                 } else {
                     document.getElementById(`survey${currentSurvey}`).classList.remove('hidden');
+                    updateNextButton(); // 새 페이지의 버튼 상태 업데이트
                 }
             }
         }
 
         function prevSurvey() {
+            // Survey Complete 페이지에서 "나중에" 버튼 클릭 시
+            if (currentSurvey === totalSurveys) {
+                alert('닉네임은 프로필에서 언제든지 설정할 수 있어요! 😊');
+                // 채팅 페이지로 이동 (실제 구현 시 적절한 URL로 변경)
+                window.location.href = '/chat';
+                return;
+            }
+            
             if (currentSurvey > 1) {
                 // 현재 서베이 숨기기
-                if (currentSurvey === totalSurveys) {
-                    document.getElementById('surveyComplete').classList.add('hidden');
-                } else {
-                    document.getElementById(`survey${currentSurvey}`).classList.add('hidden');
-                }
+                document.getElementById(`survey${currentSurvey}`).classList.add('hidden');
                 
                 currentSurvey--;
                 
+                // progress bar 업데이트
+                updateProgressBar();
+                
                 // 이전 서베이 보이기
                 document.getElementById(`survey${currentSurvey}`).classList.remove('hidden');
+                updateNextButton(); // 이전 페이지의 버튼 상태 업데이트
             }
         }
 
         function selectOption(button) {
-            // 같은 그룹의 다른 버튼들에서 selected 클래스 제거
             const optionGroup = button.parentElement;
             const allButtons = optionGroup.querySelectorAll('.option-button');
-            allButtons.forEach(btn => btn.classList.remove('selected'));
+            const currentSurveyId = button.closest('.survey-card').id;
             
-            // 클릭된 버튼에 selected 클래스 추가
-            button.classList.add('selected');
+            // Survey 2, 3: 단일 선택
+            if (currentSurveyId === 'survey2' || currentSurveyId === 'survey3') {
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+            }
+            // Survey 4, 5: 다중 선택
+            else if (currentSurveyId === 'survey4' || currentSurveyId === 'survey5') {
+                const buttonText = button.textContent.trim();
+                
+                // "특별히 없음" 선택 시 다른 옵션들 비활성화
+                if (buttonText === '특별히 없음, 다양한 소재 좋아요') {
+                    if (button.classList.contains('selected')) {
+                        // 이미 선택된 상태면 선택 해제
+                        button.classList.remove('selected');
+                        allButtons.forEach(btn => {
+                            if (btn !== button) {
+                                btn.style.opacity = '1';
+                                btn.style.pointerEvents = 'auto';
+                            }
+                        });
+                    } else {
+                        // 선택
+                        allButtons.forEach(btn => {
+                            if (btn !== button) {
+                                btn.classList.remove('selected');
+                                btn.style.opacity = '0.5';
+                                btn.style.pointerEvents = 'none';
+                            }
+                        });
+                        button.classList.add('selected');
+                    }
+                } else {
+                    // 다른 옵션 선택 시 "특별히 없음" 비활성화
+                    const specialButton = Array.from(allButtons).find(btn => 
+                        btn.textContent.trim() === '특별히 없음, 다양한 소재 좋아요'
+                    );
+                    
+                    if (specialButton && specialButton.classList.contains('selected')) {
+                        specialButton.classList.remove('selected');
+                        specialButton.style.opacity = '1';
+                        specialButton.style.pointerEvents = 'auto';
+                    }
+                    
+                    // 현재 버튼 토글
+                    button.classList.toggle('selected');
+                }
+            }
+            
+            // 다음 버튼 활성화/비활성화 체크
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const currentCard = document.querySelector('.survey-card:not(.hidden)');
+            const nextButton = currentCard.querySelector('.next-button');
+            const selectedOptions = currentCard.querySelectorAll('.option-button.selected');
+            
+            if (selectedOptions.length > 0) {
+                nextButton.disabled = false;
+                nextButton.style.opacity = '1';
+                nextButton.style.cursor = 'pointer';
+            } else {
+                nextButton.disabled = true;
+                nextButton.style.opacity = '0.5';
+                nextButton.style.cursor = 'not-allowed';
+            }
         }
 
         function completeSurvey() {
             const nickname = document.querySelector('.input-field').value.trim();
             if (nickname) {
                 alert(`${nickname}님, 환영합니다! 이제 맞춤 스타일 추천을 받아보세요! 🎉`);
-                // 여기서 실제 앱의 메인 화면으로 이동하거나 다른 액션을 수행
-                location.reload(); // 데모를 위해 페이지 새로고침
+                // OK 버튼 클릭 시 채팅 페이지로 이동
+                window.location.href = '/chat';
             } else {
                 alert('닉네임을 입력해주세요! 😊');
             }
         }
 
-        // 닫기 버튼 이벤트
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('close-button')) {
-                if (confirm('온보딩을 종료하시겠습니까?')) {
-                    location.reload();
-                }
-            }
-        });
 
         // Enter 키로 다음 단계 이동
         document.addEventListener('keypress', function(e) {
@@ -521,6 +1043,36 @@
             if (e.target.classList.contains('input-field') && e.key === 'Enter') {
                 completeSurvey();
             }
+        });
+
+        // 페이지 로드 시 초기 상태 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // Survey 1의 다음 버튼은 항상 활성화
+            const survey1NextButton = document.querySelector('#survey1 .next-button');
+            if (survey1NextButton) {
+                survey1NextButton.disabled = false;
+                survey1NextButton.style.opacity = '1';
+                survey1NextButton.style.cursor = 'pointer';
+            }
+            
+            // Survey 2-5의 다음 버튼은 초기에 비활성화
+            for (let i = 2; i <= 5; i++) {
+                const nextButton = document.querySelector(`#survey${i} .next-button`);
+                if (nextButton) {
+                    nextButton.disabled = true;
+                    nextButton.style.opacity = '0.5';
+                    nextButton.style.cursor = 'not-allowed';
+                }
+            }
+            
+            // Survey1 페이지 로딩 시 특별 애니메이션 실행
+            setTimeout(() => {
+                const profileImage = document.querySelector('.profile-image img');
+                if (profileImage) {
+                    // 프로필 이미지에 카드 reveal 애니메이션 클래스 추가
+                    profileImage.style.animation = 'cardReveal 2s ease-in-out';
+                }
+            }, 500);
         });
     </script>
 </body>

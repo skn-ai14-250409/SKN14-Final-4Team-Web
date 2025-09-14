@@ -10,6 +10,8 @@ from mainapp.models.like import Like
 from mainapp.models.search_history import SearchHistory
 from mainapp.models.search_history_product import SearchHistoryProduct
 
+from mainapp.models.influencer import Influencer
+
 
 @login_required
 def index(request):
@@ -19,7 +21,11 @@ def index(request):
         context["newbie"] = True
 
     # 마지막에 대화했던 AI 정보 호출해서 화면에 구성.
-    last_ai = ChatHistory.objects.select_related("influencer").last().influencer
+    last_id = ChatHistory.objects.select_related("influencer").last()
+    try:
+        last_ai = last_id.influencer.id
+    except:
+        last_ai = Influencer.objects.get(id=1)
     request.session["last_ai_id"] = last_ai.id
     context["last_ai"] = {
         "name"  : last_ai.name,
@@ -60,3 +66,10 @@ def detail(request, id):
 
 def survey(request):
     return render(request, "app/mainapp/survey.html")
+
+def chat(request):
+    return render(request, "app/mainapp/chat.html")
+
+def profile(request):
+    return render(request, "app/mainapp/profile.html")
+

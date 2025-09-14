@@ -24,12 +24,12 @@
             </div>
             <button class="heart-btn {{ like|yesno:"filled," }}" aria-pressed="{{ like|yesno:"true,false" }}">
                 <svg class="heart-fill" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
                 <svg class="heart-outline" width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-            </button>
+                </button>
         </div>
 
         <!-- Product Information -->
@@ -61,21 +61,21 @@
                 <h2 class="related-title">리사이클 아이템</h2>
                 <div class="related-items">
                     {% for product in products %}
-                        <div class="related-item">
+                    <div class="related-item">
                             <div class="related-image" style="background: url('{{ product.image_url }}') center/cover;"></div>
-                            <div class="related-info">
+                        <div class="related-info">
                                 <div class="related-name">{{ product.name }}</div>
                                 <div class="related-desc">{{ product.details_intro }}</div>
                                 <div class="related-price">{{ product.price }}</div>
-                            </div>
-                            <div class="related-actions">
-                                <button class="more-options">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <circle cx="12" cy="12" r="1"/>
-                                        <circle cx="19" cy="12" r="1"/>
-                                        <circle cx="5" cy="12" r="1"/>
-                                    </svg>
-                                </button>
+                        </div>
+                        <div class="related-actions">
+                            <button class="more-options">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="1"/>
+                                    <circle cx="19" cy="12" r="1"/>
+                                    <circle cx="5" cy="12" r="1"/>
+                                </svg>
+                            </button>
                                 <a href="{{ product.url }}" target="_blank" class="shop-btn">웹사이트</a>
                             </div>
                         </div>
@@ -217,7 +217,7 @@
                             <div class="code">RM089 • 재활용 폴리에스터</div>
                         </div>
                     </div>
-
+                    
                     <div class="material-item">
                         <div class="material-progress">
                             <div class="progress-circle progress-50">50%</div>
@@ -340,8 +340,8 @@
                         <div class="patagonia-progress-label">재활용 면</div>
                         <div class="patagonia-progress-subtitle">Overcoats, jackets, vests</div>
                         <div class="patagonia-progress-subtitle">Activewear, sportswear</div>
-                    </div>
-                </div>
+            </div>
+        </div>
 
                 <div class="patagonia-bottom-indicator"></div>
             </div>
