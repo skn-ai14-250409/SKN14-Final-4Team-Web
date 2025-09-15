@@ -20,7 +20,7 @@ class Member(models.Model):
     birthday  = models.DateField(null=False, default=timezone.now)
     authed    = models.CharField(max_length=1, choices=[("Y","인증됨"),("N","미인증")], default="N")
     sns_type  = models.CharField(max_length=10)
-    nickname  = models.CharField(max_length=100, default="default")
+    nickname  = models.CharField(max_length=100, null=True, default="default")
     gender    = models.CharField(max_length=10, null=True, choices=GENDER_CATEGORIES)
     prefer_material = models.CharField(max_length=100, null=True)
     prefer    = models.CharField(max_length=100, null=True)
@@ -89,3 +89,15 @@ class ModifyMemberForm(forms.ModelForm):
     class Meta:
         model = Member
         fields = ['birthday', "gender", "prefer"]
+
+
+class NewbieSurveyForm(forms.ModelForm):
+    birthday        = forms.DateTimeField(required=False)
+    nickname        = forms.CharField(required=False, max_length=100)
+    gender          = forms.CharField(required=False, max_length=10)
+    prefer_material = forms.CharField(required=False, max_length=100)
+    prefer          = forms.CharField(required=False, max_length=100)
+
+    class Meta:
+        model  = Member
+        fields = ["gender", "birthday", "prefer", "prefer_material", "nickname"]

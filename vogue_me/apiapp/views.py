@@ -1,5 +1,7 @@
 import json
+import os
 
+import requests
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
@@ -17,12 +19,13 @@ def ask_api(request):
     ai_id   = request.session.get('ai_id', 1)
     chat    = _save_chat(user_id, msg, ai_id)
 
-    api_dict = _get_result(msg)
+    api_dict = _get_result(msg, user_id)
+    print(f"{api_dict=}")
     result = {
         "type"  : "ai",
-        "msg1"  : api_dict['style_text'],
-        "msg2"  : api_dict['optional_text'],
-        "voice" : api_dict['voice'],
+        "msg1"  : api_dict.get('style_text'),
+        "msg2"  : api_dict.get('optional_text'),
+        "voice" : api_dict.get('voice'),
         "time"  : chat.time,
         "list"  : [
             {
@@ -46,7 +49,7 @@ def _save_chat(user_id, style_text, ai_id=1, talker_type="user", optional_text=N
         voice_url       = voice_url
     )
 
-def _get_result(msg:str) -> dict:
+def _get_result(msg:str, user_id) -> dict:
     # 가라 데이터 반환
     import os
     from django.conf import settings

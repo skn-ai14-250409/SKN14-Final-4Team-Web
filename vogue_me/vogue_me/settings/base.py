@@ -14,7 +14,7 @@ DEBUG      = True
 
 # ALLOWED_HOSTS 설정  ############################################
 ALLOWED_HOST  = os.getenv('ALLOWED_HOST', "127.0.0.1")
-ALLOWED_HOSTS = [ALLOWED_HOST, "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = [ALLOWED_HOST, ".looplabel.site", "127.0.0.1", "localhost"]
 
 # 기본 Django 설정### ############################################
 ROOT_URLCONF     = 'vogue_me.urls'
