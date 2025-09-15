@@ -368,6 +368,32 @@
                     <div class="chat-preview">네네 정산 알겠습니다 👍</div>
                 </div>
             </div>
+
+            <div class="chat-item" data-chat-id="3" onclick="goToChat('혜진', 3)">
+                <div class="avatar-container">
+                    <div class="avatar" style="background: #2C2C2E; color: white;">👤</div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <div class="chat-name">혜진</div>
+                        <div class="chat-time">어제</div>
+                    </div>
+                    <div class="chat-preview"></div>
+                </div>
+            </div>
+
+            <div class="chat-item" data-chat-id="4" onclick="goToChat('호영', 4)">
+                <div class="avatar-container">
+                    <div class="avatar" style="background: #2C2C2E; color: white;">👤</div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <div class="chat-name">호영</div>
+                        <div class="chat-time">어제</div>
+                    </div>
+                    <div class="chat-preview"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Delete Button -->
@@ -522,6 +548,31 @@
                 });
             });
         }
+
+        // 예시 채팅 데이터, 실제로는 서버에서 받아온다 가정
+        //const chatData = {
+        //    id: 2,
+        //    time: "2025-09-14T15:20:00",  // ISO 형식 타임스탬프 또는 원하는 포맷
+        //    preview: "네네 정산 알겠습니다 👍"
+        //};
+
+        // 시간 포맷 함수 (간단히 HH:mm 형식으로 변환)
+        //function formatTime(dateStr) {
+        //    const date = new Date(dateStr);
+        //    return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+        //}
+
+        // 해당 chat-item 요소 찾기
+        //const chatItem = document.querySelector(`.chat-item[data-chat-id="${chatData.id}"]`);
+        //if (chatItem) {
+            // 시간과 미리보기 텍스트 요소 추출
+        //    const chatTimeDiv = chatItem.querySelector(".chat-time");
+        //    const chatPreviewDiv = chatItem.querySelector(".chat-preview");
+
+            // 동적으로 데이터 삽입
+            //chatTimeDiv.textContent = formatTime(chatData.time);
+            //chatPreviewDiv.textContent = chatData.preview;
+        //}
 
         // 페이지 로드 시 이벤트 설정
         document.addEventListener('DOMContentLoaded', function() {
