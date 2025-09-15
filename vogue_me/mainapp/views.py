@@ -73,3 +73,5 @@ def chat(request):
 def profile(request):
     return render(request, "app/mainapp/profile.html")
 
+def chat_history(request):
+    return render(request, "app/mainapp/chat_history.html")

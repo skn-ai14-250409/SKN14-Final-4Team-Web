@@ -20,7 +20,9 @@ class Member(models.Model):
     birthday  = models.DateField(null=False, default=timezone.now)
     authed    = models.CharField(max_length=1, choices=[("Y","인증됨"),("N","미인증")], default="N")
     sns_type  = models.CharField(max_length=10)
+    nickname  = models.CharField(max_length=100, default="default")
     gender    = models.CharField(max_length=10, null=True, choices=GENDER_CATEGORIES)
+    prefer_material = models.CharField(max_length=100, null=True)
     prefer    = models.CharField(max_length=100, null=True)
     photo_url = models.CharField(max_length=256, null=False, default="/static/default_user.jpg")
 

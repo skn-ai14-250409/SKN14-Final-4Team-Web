@@ -24,6 +24,7 @@
             min-height: 100vh;
             position: relative;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding-bottom: 80px; /* 저장 버튼 공간 확보 */
         }
 
         /* Header */
@@ -124,6 +125,42 @@
         .menu-arrow {
             color: #999;
             font-size: 18px;
+        }
+
+        /* Save Button Container */
+        .save-button-container {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            padding: 15px 20px;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+            z-index: 100;
+        }
+
+        .save-button {
+            width: 100%;
+            background-color: #00C896;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .save-button:hover {
+            background-color: #00b085;
+        }
+
+        .save-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
 
         /* Modal Overlay */
@@ -232,22 +269,25 @@
             color: white;
         }
 
-        /* Confirm Button */
-        .confirm-btn {
-            width: 100%;
-            background-color: #00C896;
+        /* Toast Message */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
             color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 2000;
+            pointer-events: none;
         }
 
-        .confirm-btn:hover {
-            background-color: #00b085;
+        .toast.show {
+            opacity: 0.9;
         }
 
         /* Hidden class */
@@ -323,6 +363,11 @@
             <span class="menu-item-text" id="fabric-text">오가닉 코튼</span>
             <span class="menu-arrow">›</span>
         </div>
+
+        <!-- Save Button -->
+        <div class="save-button-container">
+            <button class="save-button" onclick="saveProfile()" disabled>저장하기</button>
+        </div>
     </div>
 
     <!-- Gender Selection Modal -->
@@ -335,10 +380,9 @@
             <div class="modal-content">
                 <div class="modal-question">성별을 어떻게 되시나요?</div>
                 <div class="selection-options">
-                    <button class="option-btn selected" data-value="남성">남성</button>
-                    <button class="option-btn" data-value="여성">여성</button>
+                    <button class="option-btn selected" data-value="남성" onclick="selectGender(this)">남성</button>
+                    <button class="option-btn" data-value="여성" onclick="selectGender(this)">여성</button>
                 </div>
-                <button class="confirm-btn" onclick="confirmGender()">저장</button>
             </div>
         </div>
     </div>
@@ -353,13 +397,12 @@
             <div class="modal-content">
                 <div class="modal-question">평소에 자주 입으시는 스타일이 있으시나요?</div>
                 <div class="selection-options">
-                    <button class="option-btn" data-value="미니멀">미니멀</button>
-                    <button class="option-btn selected" data-value="캐주얼">캐주얼</button>
-                    <button class="option-btn" data-value="포멀">포멀</button>
-                    <button class="option-btn" data-value="페미닌">페미닌</button>
-                    <button class="option-btn" data-value="스트릿">스트릿</button>
+                    <button class="option-btn" data-value="미니멀" onclick="selectStyle(this)">미니멀</button>
+                    <button class="option-btn selected" data-value="캐주얼" onclick="selectStyle(this)">캐주얼</button>
+                    <button class="option-btn" data-value="포멀" onclick="selectStyle(this)">포멀</button>
+                    <button class="option-btn" data-value="페미닌" onclick="selectStyle(this)">페미닌</button>
+                    <button class="option-btn" data-value="스트릿" onclick="selectStyle(this)">스트릿</button>
                 </div>
-                <button class="confirm-btn" onclick="confirmStyle()">저장</button>
             </div>
         </div>
     </div>
@@ -372,19 +415,76 @@
                 <button class="modal-close" onclick="closeModal('fabric-modal')">×</button>
             </div>
             <div class="modal-content">
-                <div class="modal-question">평소에 자주 입으시는 스타일이 있으시나요?</div>
+                <div class="modal-question">평소에 자주 입으시는 소재가 있으시나요?</div>
                 <div class="selection-options">
-                    <button class="option-btn" data-value="재활용 폴리에스터">재활용 폴리에스터</button>
-                    <button class="option-btn selected" data-value="오가닉 코튼">오가닉 코튼</button>
-                    <button class="option-btn" data-value="리사이클 울 / 나일론">리사이클 울 / 나일론</button>
-                    <button class="option-btn" data-value="소재 무관">소재 무관</button>
+                    <button class="option-btn" data-value="재활용 폴리에스터" onclick="selectFabric(this)">재활용 폴리에스터</button>
+                    <button class="option-btn selected" data-value="오가닉 코튼" onclick="selectFabric(this)">오가닉 코튼</button>
+                    <button class="option-btn" data-value="리사이클 울 / 나일론" onclick="selectFabric(this)">리사이클 울 / 나일론</button>
+                    <button class="option-btn" data-value="소재 무관" onclick="selectFabric(this)">소재 무관</button>
                 </div>
-                <button class="confirm-btn" onclick="confirmFabric()">저장</button>
             </div>
         </div>
     </div>
 
+    <!-- Toast Message -->
+    <div class="toast" id="toast"></div>
+
     <script>
+        // 프로필 데이터를 저장할 객체
+        let profileData = {
+            name: '',
+            birthDate: {
+                year: '1995',
+                month: '01',
+                day: '01'
+            },
+            email: 'helloworld@mail.com',
+            gender: '남성',
+            style: '캐주얼',
+            fabric: '오가닉 코튼'
+        };
+
+        // 초기 데이터를 저장하여 변경사항 비교용
+        let originalData = {
+            name: '',
+            birthDate: {
+                year: '1995',
+                month: '01',
+                day: '01'
+            },
+            email: 'helloworld@mail.com',
+            gender: '남성',
+            style: '캐주얼',
+            fabric: '오가닉 코튼'
+        };
+
+        // 변경사항 감지 함수
+        function hasChanges() {
+            return (
+                profileData.name !== originalData.name ||
+                profileData.birthDate.year !== originalData.birthDate.year ||
+                profileData.birthDate.month !== originalData.birthDate.month ||
+                profileData.birthDate.day !== originalData.birthDate.day ||
+                profileData.gender !== originalData.gender ||
+                profileData.style !== originalData.style ||
+                profileData.fabric !== originalData.fabric
+            );
+        }
+
+        // 저장 버튼 상태 업데이트 함수
+        function updateSaveButton() {
+            const saveButton = document.querySelector('.save-button');
+            if (hasChanges()) {
+                saveButton.disabled = false;
+                saveButton.style.backgroundColor = '#00C896';
+                saveButton.style.cursor = 'pointer';
+            } else {
+                saveButton.disabled = true;
+                saveButton.style.backgroundColor = '#ccc';
+                saveButton.style.cursor = 'not-allowed';
+            }
+        }
+
         // Date picker functionality
         function initializeDatePicker() {
             const yearSelect = document.getElementById('birth-year');
@@ -436,18 +536,28 @@
                 [yearSelect, monthSelect, daySelect].forEach(select => {
                     select.style.color = '#000';
                 });
+                
+                // 데이터 업데이트
+                profileData.birthDate.year = yearSelect.value;
+                profileData.birthDate.month = monthSelect.value;
+                profileData.birthDate.day = daySelect.value;
             }
             
             // 월이 변경될 때 일수 업데이트
             monthSelect.addEventListener('change', function() {
                 updateDays();
                 changeColor();
+                updateSaveButton(); // 변경사항 감지
             });
             yearSelect.addEventListener('change', function() {
                 updateDays();
                 changeColor();
+                updateSaveButton(); // 변경사항 감지
             });
-            daySelect.addEventListener('change', changeColor);
+            daySelect.addEventListener('change', function() {
+                changeColor();
+                updateSaveButton(); // 변경사항 감지
+            });
             
             // 초기 일수 설정
             updateDays();
@@ -470,55 +580,126 @@
             document.getElementById(modalId).classList.remove('show');
         }
 
-        // Option selection
-        function selectOption(container, value) {
-            const options = container.querySelectorAll('.option-btn');
-            options.forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
+        // Selection Functions - 선택 즉시 반영 및 모달 닫기
+        function selectGender(button) {
+            const container = button.closest('.selection-options');
+            container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            // 데이터 업데이트
+            profileData.gender = button.dataset.value;
+            document.getElementById('gender-text').textContent = button.dataset.value;
+            
+            // 변경사항 감지
+            updateSaveButton();
+            
+            // 모달 자동 닫기
+            setTimeout(() => closeModal('gender-modal'), 300);
         }
 
-        // Confirm Functions
-        function confirmGender() {
-            const selectedOption = document.querySelector('#gender-modal .option-btn.selected');
-            if (selectedOption) {
-                document.getElementById('gender-text').textContent = selectedOption.dataset.value;
+        function selectStyle(button) {
+            const container = button.closest('.selection-options');
+            container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            // 데이터 업데이트
+            profileData.style = button.dataset.value;
+            let styleText = button.dataset.value;
+            if (styleText === '캐주얼') {
+                styleText = '캐주얼 (편안, 데일리)';
             }
-            closeModal('gender-modal');
+            document.getElementById('style-text').textContent = styleText;
+            
+            // 변경사항 감지
+            updateSaveButton();
+            
+            // 모달 자동 닫기
+            setTimeout(() => closeModal('style-modal'), 300);
         }
 
-        function confirmStyle() {
-            const selectedOption = document.querySelector('#style-modal .option-btn.selected');
-            if (selectedOption) {
-                let styleText = selectedOption.dataset.value;
-                if (styleText === '캐주얼') {
-                    styleText = '캐주얼 (편안, 데일리)';
-                }
-                document.getElementById('style-text').textContent = styleText;
-            }
-            closeModal('style-modal');
+        function selectFabric(button) {
+            const container = button.closest('.selection-options');
+            container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            // 데이터 업데이트
+            profileData.fabric = button.dataset.value;
+            document.getElementById('fabric-text').textContent = button.dataset.value;
+            
+            // 변경사항 감지
+            updateSaveButton();
+            
+            // 모달 자동 닫기
+            setTimeout(() => closeModal('fabric-modal'), 300);
         }
 
-        function confirmFabric() {
-            const selectedOption = document.querySelector('#fabric-modal .option-btn.selected');
-            if (selectedOption) {
-                document.getElementById('fabric-text').textContent = selectedOption.dataset.value;
-            }
-            closeModal('fabric-modal');
+        // 통합 저장 함수
+        function saveProfile() {
+            // 이름 입력값 가져오기
+            profileData.name = document.getElementById('name-input').value || '이름을 입력하세요';
+            
+            // 저장 버튼 비활성화 (중복 클릭 방지)
+            const saveButton = document.querySelector('.save-button');
+            saveButton.disabled = true;
+            saveButton.textContent = '저장 중...';
+            
+            // 실제 API 호출 시뮬레이션
+            setTimeout(() => {
+                console.log('저장할 데이터:', profileData);
+                
+                // 실제 환경에서는 여기서 API 호출
+                // fetch('/api/profile', {
+                //     method: 'POST',
+                //     headers: {'Content-Type': 'application/json'},
+                //     body: JSON.stringify(profileData)
+                // })
+                // .then(response => response.json())
+                // .then(data => {
+                //     showToast('프로필이 저장되었습니다.');
+                //     saveButton.disabled = false;
+                //     saveButton.textContent = '저장하기';
+                // })
+                // .catch(error => {
+                //     showToast('저장 중 오류가 발생했습니다.');
+                //     saveButton.disabled = false;
+                //     saveButton.textContent = '저장하기';
+                // });
+                
+                // 토스트 메시지 표시
+                showToast('프로필이 저장되었습니다.');
+                
+                // 원본 데이터를 현재 데이터로 업데이트 (변경사항 초기화)
+                originalData = JSON.parse(JSON.stringify(profileData));
+                
+                // 버튼 상태 업데이트
+                updateSaveButton();
+                saveButton.textContent = '저장하기';
+            }, 1000);
+        }
+
+        // 토스트 메시지 표시 함수
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
         }
 
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             initializeDatePicker();
 
-            // Option button click handlers
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const container = this.closest('.selection-options');
-                    const options = container.querySelectorAll('.option-btn');
-                    options.forEach(option => option.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
+            // 이름 입력 필드 변경 감지
+            document.getElementById('name-input').addEventListener('input', function(e) {
+                profileData.name = e.target.value;
+                updateSaveButton(); // 변경사항 감지
             });
+
+            // 초기 저장 버튼 상태 설정 (비활성화)
+            updateSaveButton();
 
             // Close modal when clicking outside
             document.querySelectorAll('.modal-overlay').forEach(overlay => {
