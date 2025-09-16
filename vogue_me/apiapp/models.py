@@ -1,3 +1,6 @@
+import re
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -18,6 +21,23 @@ class ChatHistory(models.Model):
     @property
     def time(self):
         return self.talked_at.strftime("%H:%M %p")
+
+    @property
+    def log_time(self):
+        now   = datetime.now()
+        diff  = now - self.talked_at
+        hours = diff.seconds // 3600
+        if hours > 24:   return f"{diff.days} 일 전"
+        elif hours > 0:  return f"{hours} 시간 전"
+        else:            return self.time
+
+    @property
+    def is_user(self):
+        return self.talker_type == "user"
+
+    @property
+    def text_only(self):
+        return re.sub(r"</?\w+[^>]*>", "", self.style_text)
 
     class Meta:
         ordering = ['-talked_at']
