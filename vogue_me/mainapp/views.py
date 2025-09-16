@@ -68,7 +68,7 @@ def survey(request):
         print(form.errors)
         return JsonResponse(result)
     else:
-        last_ai = __get_my_last_ai_info(request)
+        last_ai = __get_my_last_ai_info(request.user.member.last_ai_id)
         return render(request, "app/mainapp/survey.html", last_ai)
 
 @login_required
