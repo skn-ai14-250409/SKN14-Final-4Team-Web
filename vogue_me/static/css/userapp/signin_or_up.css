@@ -1,47 +1,96 @@
 .openning-screen {
   display: flex;
-  flex-direction:column;
-  justify-items: center;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  height:100%;
-  position:relative;
-}
-
-.openning-screen .div {
-  width: 393px;
-  height: 852px;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 40px 20px;
+  box-sizing: border-box;
   position: relative;
 }
 
-.btn {
-  width: 353px;
-  position: absolute;
-}
-.button-primary { top: 642px; box-shadow:0 13px 20px -10px black; }
-.button-secondary { top: 712px; box-shadow: 0 13px 20px -10px; }
-
 .openning-screen .overlap-group {
-  position: absolute;
-  top: 216px;
-  width: 319px;
-  height: 105px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 319px;
+  margin-bottom: 60px;
 }
 
 .openning-screen .screenshot {
-  width: 319px;
-  height: 86px;
+  width: 100%;
+  max-width: 319px;
+  height: auto;
   aspect-ratio: 3.69;
-  object-fit: cover;
+  object-fit: contain;
+  margin-bottom: 20px;
 }
 
 .openning-screen .text-wrapper-2 {
-  width: 319px;
-  position: absolute;
-  top: 85px;
+  width: 100%;
   font-weight: 400;
   font-size: 16px;
   color: #667085b2;
   text-align: center;
   line-height: 20px;
+}
+
+.btn {
+  width: 100%;
+  max-width: 353px;
+  position: relative;
+  margin: 10px 0;
+}
+
+.button-primary { 
+  box-shadow: 0 13px 20px -10px black; 
+}
+
+.button-secondary { 
+  box-shadow: 0 13px 20px -10px; 
+}
+
+/* 모바일 (기본) */
+@media (max-width: 767px) {
+  .openning-screen {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .openning-screen .overlap-group {
+    max-width: none;
+  }
+  
+  .openning-screen .screenshot {
+    max-width: none;
+  }
+  
+  .openning-screen .text-wrapper-2 {
+    font-size: 14px;
+  }
+  
+  .btn {
+    max-width: none;
+  }
+}
+
+/* 태블릿 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .openning-screen {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+/* 데스크톱 */
+@media (min-width: 1024px) {
+  .openning-screen {
+    max-width: 420px;
+    margin: 0 auto;
+  }
 }

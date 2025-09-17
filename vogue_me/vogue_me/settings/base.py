@@ -86,6 +86,13 @@ USE_TZ          = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://*.looplabel.site",
+    "https://*.looplabel.site",
+]
+
 # 정적 파일 ###########################################
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [

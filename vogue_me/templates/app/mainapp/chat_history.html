@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "layout/meta.html" %}
+    {% include "layout/global_variables.html" %}
     <title>대화 기록 - 채팅 히스토리</title>
     <style>
         * {
@@ -331,6 +331,35 @@
             border-radius: 2.5px;
             z-index: 1001;
         }
+
+        /* 모바일 반응형 */
+        @media (max-width: 767px) {
+            body {
+                padding: 0;
+            }
+            
+            .container {
+                width: 100vw;
+                max-width: none;
+                height: 100vh;
+                max-height: none;
+                margin: 0;
+            }
+        }
+
+        /* 태블릿 */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 400px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 420px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -386,7 +415,7 @@
             if (isSelectionMode) {
                 exitSelectionMode();
             } else {
-                history.back();
+                top.location.href = '/chat';
             }
         }
 

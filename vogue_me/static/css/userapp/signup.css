@@ -1,17 +1,23 @@
 .sign-up {
-  display: grid;
-  justify-items: center;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
-  min-height: 100dvh;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .sign-up .div {
   width: 100%;
-  min-height: 100dvh;
+  max-width: 375px;
+  min-height: 100vh;
   height: auto;
   position: relative;
-  padding:20px;
+  padding: 0;
 }
 
 .sign-up .screenshot {
@@ -161,4 +167,92 @@
   font-weight: 600;
   color: #000000;
   text-decoration: underline;
+}
+
+/* 모바일 (기본) */
+@media (max-width: 767px) {
+  .sign-up {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .sign-up .div {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+  }
+  
+  .sign-up .screenshot {
+    width: 100%;
+    height: auto;
+    max-height: 54px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .sign-up .screenshot img {
+    max-height: 54px;
+    width: auto;
+  }
+  
+  .sign-up .text-wrapper {
+    width: 100%;
+    max-width: none;
+    margin-top: 30px;
+    font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+  }
+  
+  .signup-form {
+    width: 100%;
+    max-width: none;
+    margin: 30px 0 0;
+  }
+  
+  .inputbox {
+    width: 100%;
+  }
+  
+  .inputbox .form-control {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .inputbox .list-group {
+    margin-top: 10px;
+  }
+  
+  .inputbox .list-group-item {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: none;
+    margin: 20px 0;
+  }
+  
+  .already-have-an {
+    text-align: center;
+    padding: 0;
+    margin-top: 20px;
+  }
+}
+
+/* 태블릿 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sign-up .div {
+    max-width: 400px;
+  }
+}
+
+/* 데스크톱 */
+@media (min-width: 1024px) {
+  .sign-up .div {
+    max-width: 420px;
+  }
 }

@@ -19,7 +19,6 @@
         }
 
         .container {
-            max-width: 375px;
             margin: 0 auto;
             background: #ffffff;
             min-height: 100vh;
@@ -76,7 +75,7 @@
 
         .like-item img {
             width: 100%;
-            height: 200px;
+            height: 400px;
             object-fit: cover;
             display: block;
         }
@@ -215,6 +214,35 @@
             border-radius: 2.5px;
             z-index: 1001;
         }
+
+        /* 모바일 반응형 */
+        @media (max-width: 767px) {
+            body {
+                padding: 0;
+            }
+            
+            .container {
+                width: 100vw;
+                max-width: none;
+                height: 100vh;
+                max-height: none;
+                margin: 0;
+            }
+        }
+
+        /* 태블릿 */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 400px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 420px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -264,8 +292,7 @@
         ];
 
         function goBack() {
-            console.log('뒤로가기');
-            // 실제로는 이전 페이지로 이동
+            top.location.href = '/chat';
         }
 
         function toggleLike(event, element) {
