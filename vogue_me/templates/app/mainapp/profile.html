@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "layout/meta.html" %}
+    {% include "layout/global_variables.html" %}
     <title>프로필</title>
     <style>
         * {
@@ -62,12 +62,15 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background-color: #2c3e50;
+            background: #2c3e50 url("{{ user.member.photo_url }}") no-repeat;
+            background-size: cover;
+            background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 40px;
+
         }
 
         /* Form Fields */
@@ -327,6 +330,7 @@
 </head>
 <body>
     <div class="mobile-container">
+        {% csrf_token %}
         <!-- Header -->
         <div class="header">
             <button class="back-btn">‹</button>
@@ -335,9 +339,7 @@
 
         <!-- Profile Avatar -->
         <div class="profile-avatar">
-            <div class="avatar-circle">
-                👤
-            </div>
+            <div class="avatar-circle" style="background-image:url('{{ user.member.photo_url }}');"></div>
         </div>
 
         <!-- Form Fields -->
@@ -345,7 +347,7 @@
             <label class="form-label"></label>
             <div style="position: relative; display: flex; align-items: center;">
                 <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">👤</span>
-                <input type="text" class="form-input" id="name-input" style="padding-left: 50px;" placeholder="이름을 입력하세요">
+                <input type="text" class="form-input" id="name-input" style="padding-left: 50px;" placeholder="이름을 입력하세요" value="{{ user.member.nickname }}">
             </div>
         </div>
 
@@ -353,7 +355,7 @@
             <label class="form-label"></label>
             <div style="position: relative; display: flex; align-items: center;">
                 <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">📅</span>
-                <input type="text" id="birth-display" class="form-input" style="padding-left: 40px;" placeholder="MM/DD/YYYY" readonly onclick="openBirthModal()">
+                <input type="text" id="birth-display" class="form-input" style="padding-left: 40px;" placeholder="YYYY-DD-MM" readonly onclick="openBirthModal()" value="{{ user.member.birthday }}">
             </div>
         </div>
 
@@ -361,23 +363,37 @@
             <label class="form-label"></label>
             <div style="position: relative; display: flex; align-items: center;">
                 <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">✉️</span>
-                <input type="email" class="form-input" value="helloworld@mail.com" readonly style="padding-left: 40px;">
+                <input type="email" class="form-input" value="helloworld@mail.com" readonly style="padding-left: 40px;" value="{{ user.username }}">
             </div>
         </div>
 
         <!-- Menu Items -->
         <div class="menu-item" onclick="openGenderModal()">
-            <span class="menu-item-text" id="gender-text">남성</span>
+            <span class="menu-item-text" id="gender-text">{% if user.member.gender == "M" %}남성{% else %}여성{% endif %}</span>
             <span class="menu-arrow">›</span>
         </div>
 
         <div class="menu-item" onclick="openStyleModal()">
-            <span class="menu-item-text" id="style-text">캐주얼 (편안, 데일리)</span>
+            <span class="menu-item-text" id="style-text">
+                {% if user.member.prefer == "minimal" %}미니멀 (깔끔, 심플)
+                {% elif user.member.prefer == "casual" %}캐주얼 (편안, 데일리)
+                {% elif user.member.prefer == "formal" %}포멀 (정장, 단정)
+                {% elif user.member.prefer == "feminine" %}페미닌 (부드럽고 여성스러움)
+                {% elif user.member.prefer == "street" %}스트리트 (트렌디, 자유분방)
+                {% else %}-
+                {% endif %}
+            </span>
             <span class="menu-arrow">›</span>
         </div>
 
         <div class="menu-item" onclick="openFabricModal()">
-            <span class="menu-item-text" id="fabric-text">오가닉 코튼</span>
+            <span class="menu-item-text" id="fabric-text">
+                {% if user.member.prefer == "recycled polyester" %}재활용 플리에스터 (rPET)
+                {% elif user.member.prefer == "organic cotton" %}오가닉 코튼
+                {% elif user.member.prefer == "recycled wool/nilon" %}리사이클 울/나일론
+                {% else %}특별히 없음, 다양한 소재 좋아요
+                {% endif %}
+            </span>
             <span class="menu-arrow">›</span>
         </div>
 
@@ -414,8 +430,8 @@
             <div class="modal-content">
                 <div class="modal-question">성별을 어떻게 되시나요?</div>
                 <div class="selection-options">
-                    <button class="option-btn selected" data-value="남성" onclick="selectGender(this)">남성</button>
-                    <button class="option-btn" data-value="여성" onclick="selectGender(this)">여성</button>
+                    <button class="option-btn {% if user.member.gender == "M" %}selected{% endif %}" data-value="M" onclick="selectGender(this)">남성</button>
+                    <button class="option-btn {% if user.member.gender == "F" %}selected{% endif %}" data-value="F" onclick="selectGender(this)">여성</button>
                 </div>
             </div>
         </div>
@@ -431,11 +447,11 @@
             <div class="modal-content">
                 <div class="modal-question">평소에 자주 입으시는 스타일이 있으시나요?</div>
                 <div class="selection-options">
-                    <button class="option-btn" data-value="미니멀" onclick="selectStyle(this)">미니멀</button>
-                    <button class="option-btn selected" data-value="캐주얼" onclick="selectStyle(this)">캐주얼</button>
-                    <button class="option-btn" data-value="포멀" onclick="selectStyle(this)">포멀</button>
-                    <button class="option-btn" data-value="페미닌" onclick="selectStyle(this)">페미닌</button>
-                    <button class="option-btn" data-value="스트릿" onclick="selectStyle(this)">스트릿</button>
+                    <button class="option-btn {% if user.member.prefer == "minimal"  %}selected{% endif %}" data-value="minimal"  onclick="selectStyle(this)">미니멀</button>
+                    <button class="option-btn {% if user.member.prefer == "casual"   %}selected{% endif %}" data-value="casual"   onclick="selectStyle(this)">캐주얼</button>
+                    <button class="option-btn {% if user.member.prefer == "formal"   %}selected{% endif %}" data-value="formal"   onclick="selectStyle(this)">포멀</button>
+                    <button class="option-btn {% if user.member.prefer == "feminine" %}selected{% endif %}" data-value="feminine" onclick="selectStyle(this)">페미닌</button>
+                    <button class="option-btn {% if user.member.prefer == "street"   %}selected{% endif %}" data-value="street"   onclick="selectStyle(this)">스트릿</button>
                 </div>
             </div>
         </div>
@@ -451,10 +467,10 @@
             <div class="modal-content">
                 <div class="modal-question">평소에 자주 입으시는 소재가 있으시나요?</div>
                 <div class="selection-options">
-                    <button class="option-btn" data-value="재활용 폴리에스터" onclick="selectFabric(this)">재활용 폴리에스터</button>
-                    <button class="option-btn selected" data-value="오가닉 코튼" onclick="selectFabric(this)">오가닉 코튼</button>
-                    <button class="option-btn" data-value="리사이클 울 / 나일론" onclick="selectFabric(this)">리사이클 울 / 나일론</button>
-                    <button class="option-btn" data-value="소재 무관" onclick="selectFabric(this)">소재 무관</button>
+                    <button class="option-btn {% if user.member.prefer_material == "recycled polyester" %}selected{% endif %}"  data-value="recycled polyester"  onclick="selectFabric(this)">재활용 폴리에스터</button>
+                    <button class="option-btn {% if user.member.prefer_material == "organic cotton" %}selected{% endif %}"      data-value="organic cotton"      onclick="selectFabric(this)">오가닉 코튼</button>
+                    <button class="option-btn {% if user.member.prefer_material == "recycled wool/nilon" %}selected{% endif %}" data-value="recycled wool/nilon" onclick="selectFabric(this)">리사이클 울 / 나일론</button>
+                    <button class="option-btn {% if user.member.prefer_material == "no preference" %}selected{% endif %}"       data-value="no preference"       onclick="selectFabric(this)">소재 무관</button>
                 </div>
             </div>
         </div>
@@ -464,33 +480,21 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // 프로필 데이터를 저장할 객체
-        let profileData = {
-            name: '',
-            birthDate: {
-                year: '1995',
-                month: '01',
-                day: '01'
-            },
-            email: 'helloworld@mail.com',
-            gender: '남성',
-            style: '캐주얼',
-            fabric: '오가닉 코튼'
-        };
-
         // 초기 데이터를 저장하여 변경사항 비교용
         let originalData = {
-            name: '',
+            name: '{{ user.member.nickname }}',
             birthDate: {
-                year: '1995',
-                month: '01',
-                day: '01'
+                year: '{{ user.member.birthday.year }}',
+                month: '{{ user.member.birthday.month }}',
+                day: '{{ user.member.birthday.day }}'
             },
-            email: 'helloworld@mail.com',
-            gender: '남성',
-            style: '캐주얼',
-            fabric: '오가닉 코튼'
+            email: '{{ user.username }}',
+            gender: '{{ user.member.gender }}',
+            style: '{{ user.member.prefer }}',
+            fabric: '{{ user.member.prefer_material }}'
         };
+        // 프로필 데이터를 저장할 객체
+        let profileData = {...originalData};
 
         // 변경사항 감지 함수
         function hasChanges() {
@@ -623,8 +627,9 @@
             button.classList.add('selected');
             
             // 데이터 업데이트
-            profileData.gender = button.dataset.value;
-            document.getElementById('gender-text').textContent = button.dataset.value;
+            let value = button.dataset.value;
+            profileData.gender = value;
+            document.getElementById('gender-text').textContent = value === "M" ? "남성" : "여성";
             
             // 변경사항 감지
             updateSaveButton();
@@ -641,8 +646,12 @@
             // 데이터 업데이트
             profileData.style = button.dataset.value;
             let styleText = button.dataset.value;
-            if (styleText === '캐주얼') {
-                styleText = '캐주얼 (편안, 데일리)';
+            switch(styleText) {
+                case "minimal"  : styleText = "미니멀";   break;
+                case "casual"   : styleText = "캐쥬얼";   break;
+                case "formal"   : styleText = "포멀";     break;
+                case "feminine" : styleText = "페미닌";   break;
+                case "street"   : styleText = "스트리트"; break;
             }
             document.getElementById('style-text').textContent = styleText;
             
@@ -659,8 +668,15 @@
             button.classList.add('selected');
             
             // 데이터 업데이트
-            profileData.fabric = button.dataset.value;
-            document.getElementById('fabric-text').textContent = button.dataset.value;
+            let value = button.dataset.value;
+            profileData.fabric = value;
+            switch(value) {
+                case "recycled polyester"   : value = "재활용 플리에스터";  break;
+                case "organic cotton"       : value = "오가닉 코튼";        break;
+                case "recycled wool/nilon"  : value = "리사이클 울/나일론"; break;
+                default                     : value = "소재 무관";
+            }
+            document.getElementById('fabric-text').textContent = value;
             
             // 변경사항 감지
             updateSaveButton();
@@ -678,39 +694,32 @@
             const saveButton = document.querySelector('.save-button');
             saveButton.disabled = true;
             saveButton.textContent = '저장 중...';
-            
-            // 실제 API 호출 시뮬레이션
-            setTimeout(() => {
-                console.log('저장할 데이터:', profileData);
-                
-                // 실제 환경에서는 여기서 API 호출
-                // fetch('/api/profile', {
-                //     method: 'POST',
-                //     headers: {'Content-Type': 'application/json'},
-                //     body: JSON.stringify(profileData)
-                // })
-                // .then(response => response.json())
-                // .then(data => {
-                //     showToast('프로필이 저장되었습니다.');
-                //     saveButton.disabled = false;
-                //     saveButton.textContent = '저장하기';
-                // })
-                // .catch(error => {
-                //     showToast('저장 중 오류가 발생했습니다.');
-                //     saveButton.disabled = false;
-                //     saveButton.textContent = '저장하기';
-                // });
-                
-                // 토스트 메시지 표시
+
+
+            profileData["birthday"]        = `${profileData["birthDate"]["year"]}-${profileData["birthDate"]["month"]}-${profileData["birthDate"]["day"]}`;
+            profileData["nickname"]        = profileData["name"];
+            profileData["prefer"]          = profileData["style"];
+            profileData["prefer_material"] = profileData["fabric"];
+
+            fetch('/user/profile/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', "X-CSRFToken": getCookie("csrftoken") },
+                credentials: "include",
+                body: JSON.stringify(profileData)
+            })
+            .then(response => response.json())
+            .then(data => {
                 showToast('프로필이 저장되었습니다.');
-                
-                // 원본 데이터를 현재 데이터로 업데이트 (변경사항 초기화)
-                originalData = JSON.parse(JSON.stringify(profileData));
-                
-                // 버튼 상태 업데이트
-                updateSaveButton();
+                saveButton.disabled = false;
                 saveButton.textContent = '저장하기';
-            }, 1000);
+                updateSaveButton();
+            })
+            .catch(error => {
+                showToast('저장 중 오류가 발생했습니다.');
+                saveButton.disabled = false;
+                saveButton.textContent = '저장하기';
+                updateSaveButton();
+            });
         }
 
         // 토스트 메시지 표시 함수

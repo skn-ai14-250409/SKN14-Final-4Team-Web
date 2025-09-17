@@ -73,8 +73,11 @@ def survey(request):
 
 @login_required
 def chat(request):
-    my_last_ai_id = request.user.member.last_ai_id
-    ai_id     = request.GET.get("influencer", my_last_ai_id)
+    ai_id     = request.user.member.last_ai_id
+    ai_id     = request.GET.get("influencer", ai_id)
+    request.session["last_ai_id"] = ai_id
+    print(f"{request.session.get("last_ai_id")=}")
+
     last_ai   = __get_my_last_ai_info(ai_id)
     chat_log  = ChatHistory.objects.filter(user_id=request.user.id, influencer_id=ai_id).all()[:20]
     chat_log  = sorted(chat_log, key=lambda x:x.talked_at, reverse=False)

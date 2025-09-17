@@ -164,6 +164,9 @@
             font-weight: 600;
             color: #666;
             font-size: 14px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .online-dot {
@@ -373,7 +376,7 @@
             {% for room in chat_rooms %}
                 <div class="chat-item" data-chat-id="{{ room.ai_id }}" onclick="goToChat('{{ room.ai_name }}', {{ room.ai_id }})">
                     <div class="avatar-container">
-                        <div class="avatar" style="background-image:url('{{ room.ai_image }}');background-size:contain;"></div>
+                        <div class="avatar" style="background-image:url('{{ room.ai_image }}');"></div>
                         <div class="online-dot"></div>
                     </div>
                     <div class="chat-info">
@@ -385,7 +388,7 @@
                     </div>
                 </div>
             {% empty %}
-                <h1>일단 대화를 먼저 해야되!!!</h1>
+                <h3 style="display:block; width:100%; text-align:center;">인플루언서를 선택하여 대화를 시작해보세요.</h3>
             {% endfor %}
 
         <!-- Delete Button -->

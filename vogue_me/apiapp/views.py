@@ -17,7 +17,8 @@ def ask_api(request):
 
     msg     = json_data['query']
     user_id = request.user.id
-    ai_id   = request.session.get('ai_id', 1)
+    print(f"{request.session.get("last_ai_id")=}")
+    ai_id   = request.session.get('last_ai_id', 1)
     _save_chat(user_id, msg, ai_id)
 
     result, data = _get_result(msg, user_id)
@@ -77,5 +78,8 @@ def set_last_ai(request, ai_id):
     member = request.user.member
     member.last_ai_id = ai_id
     member.save()
+
+    request.session["last_ai_id"] = ai_id
+    print(f"{request.session.get("last_ai_id")=}")
 
     return JsonResponse({"status": True})

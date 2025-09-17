@@ -11,7 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from mailapp.models import *
-from .models import RegisterUserForm, Member, ModifyUserForm, ModifyMemberForm
+
+from .models import NewbieSurveyForm
 from .sns_login.google import Google
 from .sns_login.kakao import Kakao
 from .sns_login.naver import Naver
@@ -107,25 +108,23 @@ def logout(request):
 
 
 @login_required
-def profile_edit(request):
-    context = { 'main_active_tab': "mypage", "mypage_active_tab": "profile" }
-    user   = request.user
-    member = get_object_or_404(Member, user=user)
-
+def profile_save(request):
     if request.method == 'POST':
-        user_form   = ModifyUserForm(request.POST, instance=user)
-        member_form = ModifyMemberForm(request.POST, instance=member)
+        raw_data = request.body.decode('utf-8')
+        json_data = json.loads(raw_data)
 
-        if user_form.is_valid() and member_form.is_valid():
-            user_form.save()
-            member_form.save()
+        form = NewbieSurveyForm(json_data, instance=request.user.member)
+        if form.is_valid():
+            member = form.save()
+            user = request.user
+            user.member = member
+            auth.login(request, user)
             messages.success(request, '프로필이 성공적으로 업데이트되었습니다.')
-            return redirect('userapp:mypage_profile')
-        else:
-            context["edit_mode"] = True
-            messages.error(request, '입력하신 값을 확인해주세요.')
+            return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=405)
 
-    return render(request, 'app/userapp/mypage.html', context)
+    return HttpResponse(status=400)
 
 def mypage_profile(request):
     context = { 'main_active_tab': "mypage", "mypage_active_tab": "profile" }

@@ -80,17 +80,6 @@ class RegisterUserForm(UserCreationForm):
 
 
 
-class ModifyUserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name']
-
-class ModifyMemberForm(forms.ModelForm):
-    class Meta:
-        model = Member
-        fields = ['birthday', "gender", "prefer"]
-
-
 class NewbieSurveyForm(forms.ModelForm):
     birthday        = forms.DateTimeField(required=False)
     nickname        = forms.CharField(required=False, max_length=100)
