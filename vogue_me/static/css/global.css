@@ -24,27 +24,9 @@ a {
   --neutral-100: rgba(16, 16, 16, 1);
 }
 
-.contentBox {
-  width: 100%;
-  max-width: 375px;
-  height: 100dvh;
-  max-height: 812px;
-  background: white;
-  border-radius: 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  scroll-behavior: smooth;
-}
 
 /* 모바일 (기본) */
 @media (max-width: 767px) {
-  body {
-    padding: 0;
-  }
-  
   .contentBox {
     width: 100vw;
     height: 100vh;
@@ -52,32 +34,6 @@ a {
     max-height: none;
     border-radius: 0;
     box-shadow: none;
-  }
-}
-
-/* 태블릿 */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .contentBox {
-    max-width: 400px;
-    max-height: 850px;
-  }
-}
-
-/* 데스크톱 */
-@media (min-width: 1024px) {
-  .contentBox {
-    max-width: 420px;
-    max-height: 900px;
-  }
-}
-
-@media(min-width:500px) {
-  body {
-    padding:5px;
-  }
-  .contentBox {
-    border: 1px solid #3CAA92;
-    border-radius: 10px;
   }
 }
 

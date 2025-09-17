@@ -4,15 +4,17 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from mailapp.models import *
 
-from .models import NewbieSurveyForm
+from .models import NewbieSurveyForm, RegisterUserForm, Member
 from .sns_login.google import Google
 from .sns_login.kakao import Kakao
 from .sns_login.naver import Naver

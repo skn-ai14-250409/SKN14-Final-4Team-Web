@@ -57,8 +57,8 @@ class RegisterUserForm(UserCreationForm):
     email    = forms.EmailField(required=True)     # User 의 email 속성을 덮어쓰기 위해 선언
     height   = forms.FloatField(required=False, label="키", min_value=0)
     birthday = forms.DateField(required=False, label="생일")
-    gender   = forms.CharField(max_length=10, label="성별")
-    prefer   = forms.CharField(max_length=100, label="선호 스타일")
+    gender   = forms.CharField(required=False, max_length=10, label="성별")
+    prefer   = forms.CharField(required=False, max_length=100, label="선호 스타일")
 
     class Meta:
         model  = User
