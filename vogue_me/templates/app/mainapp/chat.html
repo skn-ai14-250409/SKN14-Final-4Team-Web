@@ -1331,6 +1331,7 @@
             fetch("/api/ask", {
                 method : "POST",
                 cache  : "no-cache",
+                credentials : "include",
                 headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
                 body: JSON.stringify({ query : messageText, user_id : {% if user.is_authenticated %}{{ user.id }}{% else %}1{% endif %} })
             }).then(resp => { return resp.text();

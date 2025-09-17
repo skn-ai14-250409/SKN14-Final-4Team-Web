@@ -44,7 +44,7 @@ def _get_result(msg:str, user_id):
     # with open(dummy_json, "r", encoding="utf-8") as f:
     #     return json.load(f)
     try:
-        url = "http://api.looplabel.site/api/ask"
+        url = "https://api.looplabel.site/api/ask"
         params = {"query": msg, "user_id": user_id}
         headers = {"Content-Type": "application/json"}
         # response = requests.post(url, data=params, headers=headers)
