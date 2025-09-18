@@ -17,11 +17,10 @@ def ask_api(request):
 
     msg     = json_data['query']
     user_id = request.user.id
-    print(f"{request.session.get("last_ai_id")=}")
     ai_id   = request.session.get('last_ai_id', 1)
     _save_chat(user_id, msg, ai_id)
 
-    result, data = _get_result(msg, user_id)
+    result, data = _get_result(msg, user_id, ai_id)
     print(f"{data=}")
     _save_chat(user_id, data, ai_id, "ai")
 
@@ -37,7 +36,7 @@ def _save_chat(user_id, style_text, ai_id=1, talker_type="user", optional_text=N
         voice_url       = voice_url
     )
 
-def _get_result(msg:str, user_id):
+def _get_result(msg:str, user_id, ai_id):
     # # 가라 데이터 반환
     # import os
     # from django.conf import settings
@@ -46,7 +45,7 @@ def _get_result(msg:str, user_id):
     #     return json.load(f)
     try:
         url = "https://api.looplabel.site/api/ask"
-        params = {"query": msg, "user_id": user_id}
+        params = {"query": msg, "user_id": user_id, "ai_id": ai_id}
         headers = {"Content-Type": "application/json"}
         # response = requests.post(url, data=params, headers=headers)
         response = requests.post(url, json=params, headers=headers)
@@ -72,6 +71,15 @@ def like_api(request, search_id):
         result = { "like" : True }
 
     return JsonResponse(result)
+
+@login_required
+def like_check(request):
+    user_id = request.user.id
+    style_ids = request.GET.getlist("style_id")
+    style_ids = list(set(style_ids))
+    like_ids = Like.objects.filter(search_id__in=style_ids, user_id=user_id).values_list("search_id", flat=True)
+
+    return JsonResponse({"like" : list(like_ids)})
 
 @login_required
 def set_last_ai(request, ai_id):

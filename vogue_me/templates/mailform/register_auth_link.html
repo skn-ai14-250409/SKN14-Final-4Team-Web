@@ -1,36 +1,105 @@
-<!DOCTYPE HTML>
 <HTML>
 <HEAD>
     <META CHARSET="UTF-8">
     <TITLE>본인인증 메일</TITLE>
-    <LINK REL="STYLESHEET" AS="STYLE" CROSSORIGIN HREF="HTTPS://CDN.JSDELIVR.NET/GH/ORIONCACTUS/PRETENDARD@V1.3.9/DIST/WEB/VARIABLE/PRETENDARDVARIABLE-DYNAMIC-SUBSET.MIN.CSS" />
+    <STYLE>
+      BODY {
+        FONT-FAMILY: 'Pretendard Variable', Pretendard, -APPLE-SYSTEM, BLINKMACSYSTEMFONT, "SEGOE UI", ROBOTO, "HELVETICA NEUE", ARIAL, SANS-SERIF, "APPLE COLOR EMOJI", "SEGOE UI EMOJI", "SEGOE UI SYMBOL";
+        BACKGROUND-COLOR: #F4F4F4;
+        PADDING: 20PX;
+        MARGIN: 0;
+      }
+
+      .CONTAINER {
+        MAX-WIDTH: 600PX;
+        MARGIN: 0 AUTO;
+        BACKGROUND-COLOR: #FFFFFF;
+        BORDER-RADIUS: 25PX;
+        BORDER: 1PX SOLID #DDDDDD;
+        OVERFLOW: HIDDEN;
+      }
+
+      .HEADER {
+        BACKGROUND: LINEAR-GRADIENT(90DEG, #F4D35E 0%, #20A090 100%);
+        COLOR: WHITE;
+        PADDING: 20PX;
+        TEXT-ALIGN: CENTER;
+        FONT-SIZE: 24PX;
+        FONT-WEIGHT: BOLD;
+      }
+
+      .CONTENT {
+        PADDING: 20PX;
+        FONT-SIZE: 16PX;
+        COLOR: #333333;
+      }
+
+      .TRANSLUCENT-LAYER {
+        BACKGROUND-COLOR: RGBA(255, 255, 255, 0.7);
+        PADDING: 20PX;
+        BORDER-RADIUS: 20PX;
+        MARGIN: 20PX 0;
+      }
+
+      .AUTH-BUTTON {
+        DISPLAY: INLINE-BLOCK;
+        PADDING: 15PX 30PX;
+        BORDER-RADIUS: 10PX;
+        BACKGROUND-COLOR: #20A090;
+        COLOR: WHITE;
+        TEXT-DECORATION: NONE;
+        FONT-WEIGHT: BOLD;
+      }
+
+      .FOOTER {
+        COLOR: #888888;
+        FONT-SIZE: 14PX;
+        TEXT-ALIGN: CENTER;
+        PADDING: 10PX 0 30PX;
+      }
+    </STYLE>
 </HEAD>
-<BODY STYLE="FONT-FAMILY: 'Pretendard Variable', Pretendard; BACKGROUND-COLOR: #f4f4f4; PADDING: 20PX;">
-<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" STYLE="MAX-WIDTH: 600PX; MARGIN: 0 AUTO; BACKGROUND-COLOR: #FFFFFF; BORDER: 1PX SOLID #DDDDDD;">
+<BODY>
+<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0">
+    <TBODY>
     <TR>
-        <TD STYLE="BACKGROUND-COLOR: #4CAF50; COLOR: WHITE; PADDING: 20PX; TEXT-ALIGN: CENTER; FONT-SIZE: 24PX; FONT-WEIGHT: BOLD;">
-            본인인증
-        </TD>
-    </TR>
-    <TR>
-        <TD STYLE="PADDING: 20PX; FONT-SIZE: 16PX; COLOR: #333333;">
-            안녕하세요.<BR><BR>
-            아래 본인인증 링크를 클릭하시면 가입이 완료됩니다.
-            <BR><BR>
-            <TABLE WIDTH="100%" STYLE="TEXT-ALIGN: CENTER;">
+        <TD>
+            <TABLE CLASS="CONTAINER" WIDTH="100%" CELLSPACING="0" CELLPADDING="0">
+                <TBODY>
                 <TR>
-                    <TD STYLE="FONT-SIZE: 32PX; FONT-WEIGHT: BOLD; COLOR: #333333; PADDING: 20PX;TEXT-ALIGN:CENTER;">
-                        <A HREF="{{ auth_link }}" STYLE="DISPLAY:INLINE-BLOCK;PADDING:15PX 30PX;BORDER-RADIUS:10PX;BACKGROUND-COLOR:#4CAF50;MARGIN:0 AUTO;COLOR:WHITE;TEXT-DECORATION:NONE;">본인인증 확인</A>
+                    <TD CLASS="HEADER">
+                        본인인증
                     </TD>
                 </TR>
+                <TR>
+                    <TD CLASS="CONTENT">
+                        안녕하세요.<BR><BR>
+                        아래 본인인증 링크를 클릭하시면 가입이 완료됩니다.<BR><BR>
+                        <DIV CLASS="TRANSLUCENT-LAYER">
+                            <TABLE WIDTH="100%" STYLE="TEXT-ALIGN: CENTER;">
+                                <TBODY>
+                                <TR>
+                                    <TD STYLE="FONT-SIZE: 32PX; FONT-WEIGHT: BOLD; COLOR: #333333; PADDING: 20PX; TEXT-ALIGN: CENTER;">
+                                        <A HREF="{{ auth_link }}" CLASS="AUTH-BUTTON">본인인증 확인</A>
+                                    </TD>
+                                </TR>
+                                </TBODY>
+                            </TABLE>
+                        </DIV>
+                        <BR>
+                        해당 링크는 보안을 위해 <B>{{ due_time }}</B>까지만 유효합니다.
+                        <BR>
+                        감사합니다.
+                    </TD>
+                </TR>
+                <TR>
+                    <TD CLASS="FOOTER">- LOOPLABEL -</TD>
+                </TR>
+                </TBODY>
             </TABLE>
-            <BR>
-            해당 링크는 보안을 위해 <B>{{ due_time }}</B>까지만 유효합니다.
-            <BR>
-            감사합니다.
         </TD>
     </TR>
-    <TR><TD STYLE="COLOR: #888888; FONT-SIZE: 14PX; TEXT-ALIGN:CENTER; PADDING:10PX 0 30PX;">- LoopLabel -</TD></TR>
+    </TBODY>
 </TABLE>
 </BODY>
 </HTML>

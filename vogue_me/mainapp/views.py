@@ -123,4 +123,6 @@ def chat_history(request):
     return render(request, "app/mainapp/chat_history.html", {"chat_rooms" : chat_rooms})
 
 def likes(request):
-    return render(request, "app/mainapp/likes.html")
+    likes  = Like.objects.prefetch_related("search").filter(user=request.user)
+    styles = [like.search for like in likes]
+    return render(request, "app/mainapp/likes.html", {"liked_styles" : styles})

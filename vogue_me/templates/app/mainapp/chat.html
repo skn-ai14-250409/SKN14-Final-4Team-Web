@@ -1382,28 +1382,29 @@
         });
 
         // 하트 아이콘 토글 함수
-        function toggleHeart(heartIcon) {
+        function toggleHeart($heartIcon) {
             // 이벤트 전파 방지 (product-card 클릭 이벤트와 충돌 방지)
             event.stopPropagation();
-            
-            if (heartIcon.classList.contains('unliked')) {
+
+            const look_id = $heartIcon.closest(".product-card").dataset.id;
+            fetch(`/api/like/${look_id}`)
+            .then(resp => resp.json())
+            .then(json => {
+                let like = json["like"];
+                _toggleHeart($heartIcon, like);
+            });
+        }
+        function _toggleHeart($heartIcon, isLike) {
+            if( isLike ) {
                 // 좋아요 설정 (회색 → 빨간)
-                heartIcon.classList.remove('unliked');
-                heartIcon.classList.add('liked');
-                heartIcon.textContent = '❤️';
-                
-                // 제품 정보 가져오기
-                const productCard = heartIcon.closest('.product-card');
-                const productTitle = productCard.querySelector('.product-title').textContent;
-                const productDescription = productCard.querySelector('.product-description').textContent;
-                
-                // 챗봇 메시지 생성
-                generateHeartClickMessage(productTitle, productDescription);
+                $heartIcon.classList.remove('unliked');
+                $heartIcon.classList.add('liked');
+                $heartIcon.textContent = '❤️';
             } else {
                 // 좋아요 해제 (빨간 → 회색)
-                heartIcon.classList.remove('liked');
-                heartIcon.classList.add('unliked');
-                heartIcon.textContent = '🤍';
+                $heartIcon.classList.remove('liked');
+                $heartIcon.classList.add('unliked');
+                $heartIcon.textContent = '🤍';
             }
         }
 
@@ -1528,7 +1529,6 @@
 
         function navigateToLikes() {
             closeSidebar();
-            alert('좋아요 목록 페이지로 이동합니다.');
             window.location.href = '/likes';
         }
 
@@ -1623,6 +1623,23 @@
             }
         }
 
+        function initHeartIcon() {
+            let hearts = [...document.querySelectorAll(".heart-icon")];
+            let styles = hearts.map((e,i) => e.closest(".product-card").dataset.id);
+            let params = styles.map(e => `style_id=${e}`)
+            fetch("/api/like_check?"+params.join("&"))
+                .then(resp => resp.json())
+                .then(json => {
+                    let ids = json["like"];
+                    styles.forEach((e,i) => {
+                        let id = parseInt(e);
+                        if( ids.includes(id) ) {
+                            _toggleHeart(hearts[i], true);
+                        }
+                    });
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // influencer 파라미터 읽기
             const params = new URLSearchParams(window.location.search);
@@ -1675,6 +1692,8 @@
                     }
                 });
             }
+
+            initHeartIcon();
         });
         scrollToBottom();
     </script>
