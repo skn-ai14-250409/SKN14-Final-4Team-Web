@@ -390,12 +390,14 @@
         .heart-icon.liked {
             color: #ff4757;
             background: rgba(255, 71, 87, 0.1);
+            content: '❤️';
         }
 
         .heart-icon.unliked {
             color: #666;
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid #ddd;
+            content: '🤍';
         }
 
         .product-info {
@@ -1011,6 +1013,36 @@
             color: #20A090;
             font-weight: 600;
         }
+
+        .message-bubble ul,
+        .message-bubble ul li {
+            list-style: none;
+        }
+        .message-bubble ul {
+            margin-top: 10px;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: beige;
+        }
+        .message-bubble ul li.name {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .message-bubble ul li.name:before {
+            content:"§ ";
+        }
+        .message-bubble ul li.desc {
+            font-style: italic;
+            color: #6d6d6d;
+            margin:5px 0;
+        }
+        .message-bubble ul li.combi {
+
+        }
+        .message-bubble ul li.combi:before {
+            content:"· ";
+        }
     </style>
 </head>
 <body>
@@ -1381,11 +1413,17 @@
             }
         });
 
+        document.addEventListener("click", e => {
+            const $ele = e.target;
+            if( $ele.classList.contains("heart-icon") ) {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleHeart($ele)
+            }
+        });
+
         // 하트 아이콘 토글 함수
         function toggleHeart($heartIcon) {
-            // 이벤트 전파 방지 (product-card 클릭 이벤트와 충돌 방지)
-            event.stopPropagation();
-
             const look_id = $heartIcon.closest(".product-card").dataset.id;
             fetch(`/api/like/${look_id}`)
             .then(resp => resp.json())

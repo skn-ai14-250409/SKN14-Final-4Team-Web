@@ -3,7 +3,6 @@ import os
 
 import requests
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 
 from apiapp.models import ChatHistory
@@ -21,7 +20,6 @@ def ask_api(request):
     _save_chat(user_id, msg, ai_id)
 
     result, data = _get_result(msg, user_id, ai_id)
-    print(f"{data=}")
     _save_chat(user_id, data, ai_id, "ai")
 
     return result
@@ -36,18 +34,12 @@ def _save_chat(user_id, style_text, ai_id=1, talker_type="user", optional_text=N
         voice_url       = voice_url
     )
 
+ASK_API_URL = os.getenv("FAST_API_ASK", "https://api.looplabel.site/api/ask")
 def _get_result(msg:str, user_id, ai_id):
-    # # 가라 데이터 반환
-    # import os
-    # from django.conf import settings
-    # dummy_json = os.path.join(settings.BASE_DIR, "static/dummy", 'dummy_result.json')
-    # with open(dummy_json, "r", encoding="utf-8") as f:
-    #     return json.load(f)
     try:
-        url = "https://api.looplabel.site/api/ask"
+        url = ASK_API_URL
         params = {"query": msg, "user_id": user_id, "ai_id": ai_id}
         headers = {"Content-Type": "application/json"}
-        # response = requests.post(url, data=params, headers=headers)
         response = requests.post(url, json=params, headers=headers)
         response.raise_for_status()
 
@@ -88,6 +80,5 @@ def set_last_ai(request, ai_id):
     member.save()
 
     request.session["last_ai_id"] = ai_id
-    print(f"{request.session.get("last_ai_id")=}")
 
     return JsonResponse({"status": True})
