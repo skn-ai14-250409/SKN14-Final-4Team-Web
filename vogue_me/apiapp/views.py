@@ -19,10 +19,14 @@ def ask_api(request):
     ai_id   = request.session.get('last_ai_id', 1)
     _save_chat(user_id, msg, ai_id)
 
-    result, data = _get_result(msg, user_id, ai_id)
-    _save_chat(user_id, data, ai_id, "ai")
+    try:
+        result, data = _get_result(msg, user_id, ai_id)
+        _save_chat(user_id, data, ai_id, "ai")
+        return result
+    except Exception as e:
+        print(e)
+        return HttpResponse("죄송합니다. 문제가 생긴거 같네요.")
 
-    return result
 
 def _save_chat(user_id, style_text, ai_id=1, talker_type="user", optional_text=None, voice_url=None):
     return ChatHistory.objects.create(
@@ -36,20 +40,16 @@ def _save_chat(user_id, style_text, ai_id=1, talker_type="user", optional_text=N
 
 ASK_API_URL = os.getenv("FAST_API_ASK", "https://api.looplabel.site/api/ask")
 def _get_result(msg:str, user_id, ai_id):
-    try:
-        url = ASK_API_URL
-        params = {"query": msg, "user_id": user_id, "ai_id": ai_id}
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(url, json=params, headers=headers)
-        response.raise_for_status()
+    url     = ASK_API_URL
+    params  = {"query": msg, "user_id": user_id, "ai_id": ai_id}
+    headers = {"Content-Type": "application/json"}
+    # response = requests.post(url, data=params, headers=headers)
+    response = requests.post(url, json=params, headers=headers)
+    response.raise_for_status()
 
-        result_type = response.headers.get('Content-Type', '')
-        if "application/json" in result_type:   return JsonResponse(response.json()), response.json()
-        else:                                   return HttpResponse(response.text), response.text
-    except Exception as e:
-        print(e)
-        __msg = "죄송합니다. 문제가 생긴거 같네요."
-        return HttpResponse(__msg), __msg
+    result_type = response.headers.get('Content-Type', '')
+    if "application/json" in result_type:   return JsonResponse(response.json()), response.json()
+    else:                                   return HttpResponse(response.text), response.text
 
 @login_required
 def like_api(request, search_id):

@@ -1343,9 +1343,9 @@
         }
 
         // 메시지 전송 함수
-        function sendMessage() {
+        function sendMessage(text) {
             const messageInput = document.getElementById('messageInput');
-            const messageText = messageInput.value.trim();
+            const messageText = text || messageInput.value.trim();
             
             if (messageText === '') return;
             
@@ -1361,7 +1361,7 @@
                 cache  : "no-cache",
                 credentials : "include",
                 headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
-                body: JSON.stringify({ query : messageText, user_id : {% if user.is_authenticated %}{{ user.id }}{% else %}1{% endif %} })
+                body: JSON.stringify({ query : messageText })
             }).then(resp => { return resp.text();
             }).then(text => {
                 hideTypingIndicator();
