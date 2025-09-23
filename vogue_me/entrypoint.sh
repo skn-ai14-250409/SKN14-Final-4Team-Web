@@ -8,4 +8,4 @@ echo "Collecting and Uploading static files into S3 bucket."
 python manage.py collectstatic --noinput
 
 echo "Run gunicorn."
-exec gunicorn -c gunicorn.conf.py
+exec gunicorn -c gunicorn.conf.py --timeout 600

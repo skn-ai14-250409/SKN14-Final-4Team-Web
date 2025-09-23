@@ -12,6 +12,8 @@ BASE_DIR   = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = 'django-insecure--b1q6+ymklxs)n#iqm5jlspl@=k-5$!r1hft=2_%nj27xbf!n3'
 DEBUG      = True
 
+SESSION_EXPIRE_SECONDS = 1800
+
 # ALLOWED_HOSTS 설정  ############################################
 ALLOWED_HOST  = os.getenv('ALLOWED_HOST', "127.0.0.1")
 ALLOWED_HOSTS = [ALLOWED_HOST, ".looplabel.site", "127.0.0.1", "localhost"]
