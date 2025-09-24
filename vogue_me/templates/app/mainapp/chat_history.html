@@ -492,18 +492,29 @@
 
         function confirmDelete() {
             if (selectedChats.size > 0) {
-                // 선택된 채팅들 삭제
-                selectedChats.forEach(chatId => {
-                    const chatItem = document.querySelector(`[data-chat-id="${chatId}"]`);
-                    if (chatItem) {
-                        chatItem.remove();
-                    }
-                });
+                const ids = Array.from(selectedChats);
                 
-                console.log(`선택된 ${selectedChats.size}개 채팅 기록 삭제됨`);
-                exitSelectionMode();
-                hideDeleteModal();
-            }
+                fetch('/chat/delete/', {
+                    method : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken' : getCookie('csrftoken'),
+                    },
+                    body   : JSON.stringify({ chat_ids:ids })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        ids.forEach(chatId => {
+                            const chatItem = document.querySelector(`[data-chat-id="${chatId}"]`);
+                            if (chatItem) chatItem.remove();
+                        });
+                        console.log(`선택된 ${selectedChats.size}개 채팅 기록 삭제됨`);
+                        exitSelectionMode();
+                        hideDeleteModal();
+                    }
+                    })
+                }
         }
 
         // 롱프레스 이벤트 처리
@@ -543,31 +554,6 @@
                 });
             });
         }
-
-        // 예시 채팅 데이터, 실제로는 서버에서 받아온다 가정
-        //const chatData = {
-        //    id: 2,
-        //    time: "2025-09-14T15:20:00",  // ISO 형식 타임스탬프 또는 원하는 포맷
-        //    preview: "네네 정산 알겠습니다 👍"
-        //};
-
-        // 시간 포맷 함수 (간단히 HH:mm 형식으로 변환)
-        //function formatTime(dateStr) {
-        //    const date = new Date(dateStr);
-        //    return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
-        //}
-
-        // 해당 chat-item 요소 찾기
-        //const chatItem = document.querySelector(`.chat-item[data-chat-id="${chatData.id}"]`);
-        //if (chatItem) {
-            // 시간과 미리보기 텍스트 요소 추출
-        //    const chatTimeDiv = chatItem.querySelector(".chat-time");
-        //    const chatPreviewDiv = chatItem.querySelector(".chat-preview");
-
-            // 동적으로 데이터 삽입
-            //chatTimeDiv.textContent = formatTime(chatData.time);
-            //chatPreviewDiv.textContent = chatData.preview;
-        //}
 
         // 페이지 로드 시 이벤트 설정
         document.addEventListener('DOMContentLoaded', function() {

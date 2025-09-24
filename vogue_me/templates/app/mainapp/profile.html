@@ -62,7 +62,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: #2c3e50 url("{{ user.member.photo_url }}") no-repeat;
+            background: ("{{ user.member.photo_url }}") no-repeat;
             background-size: cover;
             background-position: center;
             display: flex;
@@ -347,7 +347,7 @@
             <label class="form-label"></label>
             <div style="position: relative; display: flex; align-items: center;">
                 <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">👤</span>
-                <input type="text" class="form-input" id="name-input" style="padding-left: 50px;" placeholder="이름을 입력하세요" value="{{ user.member.nickname }}">
+                <input type="text" class="form-input" id="name-input" style="padding-left: 50px;"  value="{{ user.member.nickname }}" placeholder="이름을 입력하세요">
             </div>
         </div>
 
@@ -355,7 +355,7 @@
             <label class="form-label"></label>
             <div style="position: relative; display: flex; align-items: center;">
                 <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">📅</span>
-                <input type="text" id="birth-display" class="form-input" style="padding-left: 40px;" placeholder="YYYY-DD-MM" readonly onclick="openBirthModal()" value="{{ user.member.birthday }}">
+                <input type="text" id="birth-display" class="form-input" style="padding-left: 40px;"  value="{{ user.member.birthday }}" placeholder="MM/DD/YYYY" readonly onclick="return false;">
             </div>
         </div>
 
@@ -363,14 +363,13 @@
             <label class="form-label"></label>
             <div style="position: relative; display: flex; align-items: center;">
                 <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">✉️</span>
-                <input type="email" class="form-input" value="helloworld@mail.com" readonly style="padding-left: 40px;" value="{{ user.username }}">
+                <input type="email" class="form-input"  value="{{ user.username }}" readonly style="padding-left: 40px;">
             </div>
         </div>
 
         <!-- Menu Items -->
-        <div class="menu-item" onclick="openGenderModal()">
+        <div class="menu-item" onclick="return false;">
             <span class="menu-item-text" id="gender-text">{% if user.member.gender == "M" %}남성{% else %}여성{% endif %}</span>
-            <span class="menu-arrow">›</span>
         </div>
 
         <div class="menu-item" onclick="openStyleModal()">
@@ -388,9 +387,9 @@
 
         <div class="menu-item" onclick="openFabricModal()">
             <span class="menu-item-text" id="fabric-text">
-                {% if user.member.prefer == "recycled polyester" %}재활용 플리에스터 (rPET)
-                {% elif user.member.prefer == "organic cotton" %}오가닉 코튼
-                {% elif user.member.prefer == "recycled wool/nilon" %}리사이클 울/나일론
+                {% if user.member.prefer_material == "recycled polyester" %}재활용 플리에스터 (rPET)
+                {% elif user.member.prefer_material == "organic cotton" %}오가닉 코튼
+                {% elif user.member.prefer_material == "recycled wool/nilon" %}리사이클 울/나일론
                 {% else %}특별히 없음, 다양한 소재 좋아요
                 {% endif %}
             </span>
@@ -400,40 +399,6 @@
         <!-- Save Button -->
         <div class="save-button-container">
             <button class="save-button" onclick="saveProfile()" disabled>저장하기</button>
-        </div>
-    </div>
-
-    <!-- Birthdate Bottom Sheet -->
-    <div class="modal-overlay" id="birth-modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">생년월일</h3>
-                <button class="modal-close" onclick="closeModal('birth-modal')">×</button>
-            </div>
-            <div class="modal-content">
-                <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
-                    <select id="picker-month" style="flex:1; padding:12px; border:1px solid #e0e0e0; border-radius:8px; font-size:16px;"></select>
-                    <select id="picker-day" style="flex:1; padding:12px; border:1px solid #e0e0e0; border-radius:8px; font-size:16px;"></select>
-                    <select id="picker-year" style="flex:1; padding:12px; border:1px solid #e0e0e0; border-radius:8px; font-size:16px;"></select>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Gender Selection Modal -->
-    <div class="modal-overlay" id="gender-modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">성별</h3>
-                <button class="modal-close" onclick="closeModal('gender-modal')">×</button>
-            </div>
-            <div class="modal-content">
-                <div class="modal-question">성별을 어떻게 되시나요?</div>
-                <div class="selection-options">
-                    <button class="option-btn {% if user.member.gender == "M" %}selected{% endif %}" data-value="M" onclick="selectGender(this)">남성</button>
-                    <button class="option-btn {% if user.member.gender == "F" %}selected{% endif %}" data-value="F" onclick="selectGender(this)">여성</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -480,6 +445,7 @@
     <div class="toast" id="toast"></div>
 
     <script>
+
         // 초기 데이터를 저장하여 변경사항 비교용
         let originalData = {
             name: '{{ user.member.nickname }}',
@@ -500,10 +466,6 @@
         function hasChanges() {
             return (
                 profileData.name !== originalData.name ||
-                profileData.birthDate.year !== originalData.birthDate.year ||
-                profileData.birthDate.month !== originalData.birthDate.month ||
-                profileData.birthDate.day !== originalData.birthDate.day ||
-                profileData.gender !== originalData.gender ||
                 profileData.style !== originalData.style ||
                 profileData.fabric !== originalData.fabric
             );
@@ -523,82 +485,8 @@
             }
         }
 
-        // Birth bottom sheet picker
-        function openBirthModal() {
-            // 현재 값으로 피커 동기화
-            const y = profileData.birthDate.year;
-            const m = profileData.birthDate.month;
-            const d = profileData.birthDate.day;
-            const yearSel = document.getElementById('picker-year');
-            const monthSel = document.getElementById('picker-month');
-            const daySel = document.getElementById('picker-day');
-            if (yearSel && monthSel && daySel) {
-                monthSel.value = m;
-                yearSel.value = y;
-                // 월/년 변경에 따른 일수 보정
-                const days = new Date(parseInt(y), parseInt(m), 0).getDate();
-                // 옵션이 충분히 없을 수 있으므로 새로 구성
-                daySel.innerHTML = '';
-                for (let day = 1; day <= days; day++) {
-                    const v = String(day).padStart(2, '0');
-                    const opt = document.createElement('option');
-                    opt.value = v; opt.textContent = v;
-                    daySel.appendChild(opt);
-                }
-                daySel.value = d;
-            }
-            document.getElementById('birth-modal').classList.add('show');
-        }
-
-        function initBirthPicker() {
-            const yearSel = document.getElementById('picker-year');
-            const monthSel = document.getElementById('picker-month');
-            const daySel = document.getElementById('picker-day');
-
-            // 월 옵션 (01-12)
-            monthSel.innerHTML = '';
-            for (let m = 1; m <= 12; m++) {
-                const v = String(m).padStart(2, '0');
-                const opt = document.createElement('option');
-                opt.value = v; opt.textContent = v;
-                if (v === profileData.birthDate.month) opt.selected = true;
-                monthSel.appendChild(opt);
-            }
-
-            // 연도 옵션 (1950-2025)
-            yearSel.innerHTML = '';
-            for (let y = new Date().getFullYear(); y >= 1950; y--) {
-                const opt = document.createElement('option');
-                opt.value = String(y); opt.textContent = String(y);
-                if (String(y) === profileData.birthDate.year) opt.selected = true;
-                yearSel.appendChild(opt);
-            }
-
-            function refreshDays() {
-                const y = parseInt(yearSel.value);
-                const m = parseInt(monthSel.value);
-                const days = new Date(y, m, 0).getDate();
-                daySel.innerHTML = '';
-                for (let d = 1; d <= days; d++) {
-                    const v = String(d).padStart(2, '0');
-                    const opt = document.createElement('option');
-                    opt.value = v; opt.textContent = v;
-                    if (v === profileData.birthDate.day) opt.selected = true;
-                    daySel.appendChild(opt);
-                }
-            }
-
-            monthSel.addEventListener('change', () => { refreshDays(); });
-            yearSel.addEventListener('change', () => { refreshDays(); });
-            refreshDays();
-        }
-
 
         // Modal Functions
-        function openGenderModal() {
-            document.getElementById('gender-modal').classList.add('show');
-        }
-
         function openStyleModal() {
             document.getElementById('style-modal').classList.add('show');
         }
@@ -608,36 +496,10 @@
         }
 
         function closeModal(modalId) {
-            // 생년월일 모달을 닫을 때만 선택값을 반영
-            if (modalId === 'birth-modal') {
-                const y = document.getElementById('picker-year').value;
-                const m = document.getElementById('picker-month').value;
-                const d = document.getElementById('picker-day').value;
-                profileData.birthDate = { year: y, month: m, day: d };
-                document.getElementById('birth-display').value = `${m}/${d}/${y}`;
-                updateSaveButton();
-            }
             document.getElementById(modalId).classList.remove('show');
         }
 
         // Selection Functions - 선택 즉시 반영 및 모달 닫기
-        function selectGender(button) {
-            const container = button.closest('.selection-options');
-            container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            
-            // 데이터 업데이트
-            let value = button.dataset.value;
-            profileData.gender = value;
-            document.getElementById('gender-text').textContent = value === "M" ? "남성" : "여성";
-            
-            // 변경사항 감지
-            updateSaveButton();
-            
-            // 모달 자동 닫기
-            setTimeout(() => closeModal('gender-modal'), 300);
-        }
-
         function selectStyle(button) {
             const container = button.closest('.selection-options');
             container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
@@ -648,7 +510,7 @@
             let styleText = button.dataset.value;
             switch(styleText) {
                 case "minimal"  : styleText = "미니멀";   break;
-                case "casual"   : styleText = "캐쥬얼";   break;
+                case "casual"   : styleText = "캐주얼";   break;
                 case "formal"   : styleText = "포멀";     break;
                 case "feminine" : styleText = "페미닌";   break;
                 case "street"   : styleText = "스트리트"; break;
@@ -695,8 +557,6 @@
             saveButton.disabled = true;
             saveButton.textContent = '저장 중...';
 
-
-            profileData["birthday"]        = `${profileData["birthDate"]["year"]}-${profileData["birthDate"]["month"]}-${profileData["birthDate"]["day"]}`;
             profileData["nickname"]        = profileData["name"];
             profileData["prefer"]          = profileData["style"];
             profileData["prefer_material"] = profileData["fabric"];
@@ -737,7 +597,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 초기 표시값 세팅
             document.getElementById('birth-display').value = `${profileData.birthDate.month}/${profileData.birthDate.day}/${profileData.birthDate.year}`;
-            initBirthPicker();
 
             // 이름 입력 필드 변경 감지
             document.getElementById('name-input').addEventListener('input', function(e) {

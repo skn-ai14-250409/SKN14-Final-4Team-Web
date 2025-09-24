@@ -1043,6 +1043,12 @@
         .message-bubble ul li.combi:before {
             content:"· ";
         }
+
+        .message-bubble audio {
+            width: 100%;       
+            max-width: 280px;  
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -1059,7 +1065,7 @@
                 <div class="user-profile">
                     <div class="profile-avatar" style="background-image:url('{{ user.member.photo_url }}');"></div>
                     <div class="user-info">
-                        <div class="user-name">{{ user.first_name }}{{ user.last_name }}</div>
+                        <div class="user-name">{{ user.member.nickname }}</div>
                         <div class="user-email">{{ user.username }}</div>
                     </div>
                 </div>
@@ -1146,10 +1152,10 @@
                 <div class="welcome-container">
                     <div class="welcome-message">
                         <div class="welcome-text">
-                                안녕하세요 <span class="highlight" id="userNickname">{{ user.first_name }}님🌿</span> 다시 만나 반가워요!
+                                안녕하세요 <span class="highlight" id="userNickname">{{ user.member.nickname }}님🌿</span> 다시 만나 반가워요!
                         </div>
                         <div class="welcome-text">
-                                방금 알려주신 취향과 스타일 키워드를 바탕으로, 앞으로 <span class="highlight" id="userNickname">{{ user.first_name }}님🌿</span>만의 지구를 지키는 패션 추천을 준비해뒀어요.
+                                방금 알려주신 취향과 스타일 키워드를 바탕으로, 앞으로 <span class="highlight" id="userNickname">{{ user.member.nickname }}님🌿</span>만의 지구를 지키는 패션 추천을 준비해뒀어요.
                         </div>
                         <div class="welcome-text">
                                 👉 지금 바로 "주말 데이트에 어울리는 캐주얼룩 추천해줘"처럼 말씀해주시면, 제가 취향에 맞춰 스타일을 보여드릴 수 있어요.
@@ -1203,6 +1209,18 @@
     </div>
 
     <script>
+        function autoPlayLastAudio() {
+            if (!globalVoiceEnabled) return;
+            const audios = document.querySelectorAll(".message.ai audio");
+            if (audios.length > 0) {
+                const lastAudio = audios[audios.length - 1];
+                lastAudio.loop = false; // 반복 끄기
+                lastAudio.play().catch(err => {
+                    console.log("자동재생 실패 (브라우저 정책 등):", err);
+                });
+            }
+        }
+
         // 현재 시간 포맷팅
         function getCurrentTime() {
             const now = new Date();
@@ -1228,7 +1246,7 @@
                     <div class="message-bubble">${text}</div>
                 `;
             } else {
-                let bubbleContent = text.replace("{{ user.first_name }}", `<span class="highlight" id="userNickname">{{ user.first_name }}님🌿</span>`);
+                let bubbleContent = text.replace("{{ user.member.nickname }}", `<span class="highlight" id="userNickname">{{ user.member.nickname }}님🌿</span>`);
                 if (hasProducts) {
                     bubbleContent += `
                         <div class="product-container">
@@ -1269,6 +1287,16 @@
                 setupProductContainerScroll(newProductContainer);
             }
             
+            if (!isUser) {
+                const audioEl = messageDiv.querySelector("audio");
+                if (audioEl && globalVoiceEnabled) {
+                    audioEl.loop = false; // 반복 끄기
+                    audioEl.play().catch(err => {
+                        console.log("자동재생 실패:", err);
+                    });
+                }
+            }
+
             scrollToBottom();
         }
 
@@ -1397,12 +1425,22 @@
             
             if (globalVoiceEnabled) {
                 voiceBtn.classList.add('active');
-                voiceBtn.title = '음성 자동재생 켜짐';
+                voiceBtn.title = '음성 자동재생';
             } else {
                 voiceBtn.classList.remove('active');
-                voiceBtn.title = '음성 자동재생 꺼짐';
+                voiceBtn.title = '음소거';
                 stopVoiceStreaming();
             }
+
+            fetch('/toggle-voice/', {
+                method : 'POST',
+                headers: {
+                    'X-CSRFToken' : getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body   : JSON.stringify({ voice_enabled: glabalVoiceEnabled }),
+                credentials : 'include'
+            })
         }
 
         // 페이지 로드 시 전역 음성 버튼 활성화

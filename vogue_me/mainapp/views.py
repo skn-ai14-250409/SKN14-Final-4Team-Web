@@ -26,7 +26,7 @@ def __get_my_last_ai_info(ai_id):
 @login_required
 def index(request):
     if not ChatHistory.objects.filter(user_id=request.user.id).exists():
-        return redirect("mainapp:survey")
+        return redirect("mainapp:chat")
 
     # 마지막에 대화했던 AI 정보 호출해서 화면에 구성.
     return redirect("mainapp:chat")
@@ -63,6 +63,9 @@ def survey(request):
         data   = json.loads(request.body)
         form   = NewbieSurveyForm(data, instance=request.user.member)
         if form.is_valid():
+            nickname = data.get('nickname') or form.cleaned_data.get('nickname')
+            request.user.first_name = nickname
+            request.user.save()
             form.save()
             result["status"] = True
         return JsonResponse(result)
@@ -80,15 +83,44 @@ def chat(request):
     chat_log  = ChatHistory.objects.filter(user_id=request.user.id, influencer_id=ai_id).all()[:20]
     chat_log  = sorted(chat_log, key=lambda x:x.talked_at, reverse=False)
 
+    voice_enabled = request.user.member.voice_enabled
+
     context = {
         "last_ai"  : last_ai,
         "all_ai"   : Influencer.objects.all(),
         "chat_log" : chat_log,
+        "voice_enabled" : voice_enabled,
     }
     return render(request, "app/mainapp/chat.html", context)
 
+def toggle_voice(request):
+    data = json.loads(request.body)
+    enabled = data.get('voice_enabled', True)
+    profile = request.user.member
+    profile.voice_enabled = enabled
+    profile.save()
+    return JsonResponse({'success': True, 'voice_enabled': profile.voice_enabled})
+
 def profile(request):
     return render(request, "app/mainapp/profile.html")
+
+def save_profile(request):
+    if request.method == "POST":
+        try:
+            data   = json.loads(request.body.decode("utf-8"))
+            user   = request.user
+            member = user.member
+
+            member.nickname        = data.get("nickname", member.nickname)
+            member.prefer          = data.get("prefer", member.prefer)
+            member.prefer_material = data.get("prefer_material", member.prefer_material)
+            member.save()
+
+            return JsonResponse({"success": True, "message": "프로필 저장 완료"})
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    return JsonResponse({"success": False, "message": "잘못된 요청"}, status=405)
 
 def chat_history(request):
     user_id = request.user.id
@@ -120,7 +152,21 @@ def chat_history(request):
 
     return render(request, "app/mainapp/chat_history.html", {"chat_rooms" : chat_rooms})
 
+@login_required
+def delete_chats(request):
+    data = json.loads(request.body.decode('utf-8'))
+    chat_ids = data.get("chat_ids", [])
+
+    if not chat_ids:
+        return JsonResponse({"success": False, "message": "삭제할 항목이 없습니다."})
+        
+    ChatHistory.objects.filter(influencer_id__in=chat_ids, user=request.user).delete()
+
+    return JsonResponse({"success": True})
+
 def likes(request):
     likes  = Like.objects.prefetch_related("search").filter(user=request.user)
     styles = [like.search for like in likes]
     return render(request, "app/mainapp/likes.html", {"liked_styles" : styles})
+
+
