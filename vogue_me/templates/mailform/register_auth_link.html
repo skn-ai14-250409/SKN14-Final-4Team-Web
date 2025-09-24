@@ -2,85 +2,29 @@
 <HEAD>
     <META CHARSET="UTF-8">
     <TITLE>본인인증 메일</TITLE>
-    <STYLE>
-      BODY {
-        FONT-FAMILY: 'Pretendard Variable', Pretendard, -APPLE-SYSTEM, BLINKMACSYSTEMFONT, "SEGOE UI", ROBOTO, "HELVETICA NEUE", ARIAL, SANS-SERIF, "APPLE COLOR EMOJI", "SEGOE UI EMOJI", "SEGOE UI SYMBOL";
-        BACKGROUND-COLOR: #F4F4F4;
-        PADDING: 20PX;
-        MARGIN: 0;
-      }
-
-      .CONTAINER {
-        MAX-WIDTH: 600PX;
-        MARGIN: 0 AUTO;
-        BACKGROUND-COLOR: #FFFFFF;
-        BORDER-RADIUS: 25PX;
-        BORDER: 1PX SOLID #DDDDDD;
-        OVERFLOW: HIDDEN;
-      }
-
-      .HEADER {
-        BACKGROUND: LINEAR-GRADIENT(90DEG, #F4D35E 0%, #20A090 100%);
-        COLOR: WHITE;
-        PADDING: 20PX;
-        TEXT-ALIGN: CENTER;
-        FONT-SIZE: 24PX;
-        FONT-WEIGHT: BOLD;
-      }
-
-      .CONTENT {
-        PADDING: 20PX;
-        FONT-SIZE: 16PX;
-        COLOR: #333333;
-      }
-
-      .TRANSLUCENT-LAYER {
-        BACKGROUND-COLOR: RGBA(255, 255, 255, 0.7);
-        PADDING: 20PX;
-        BORDER-RADIUS: 20PX;
-        MARGIN: 20PX 0;
-      }
-
-      .AUTH-BUTTON {
-        DISPLAY: INLINE-BLOCK;
-        PADDING: 15PX 30PX;
-        BORDER-RADIUS: 10PX;
-        BACKGROUND-COLOR: #20A090;
-        COLOR: WHITE;
-        TEXT-DECORATION: NONE;
-        FONT-WEIGHT: BOLD;
-      }
-
-      .FOOTER {
-        COLOR: #888888;
-        FONT-SIZE: 14PX;
-        TEXT-ALIGN: CENTER;
-        PADDING: 10PX 0 30PX;
-      }
-    </STYLE>
 </HEAD>
-<BODY>
+<BODY STYLE="FONT-FAMILY: 'Pretendard Variable', Pretendard, -APPLE-SYSTEM, BLINKMACSYSTEMFONT, 'SEGOE UI', ROBOTO, 'HELVETICA NEUE', ARIAL, SANS-SERIF, 'APPLE COLOR EMOJI', 'SEGOE UI EMOJI', 'SEGOE UI SYMBOL'; BACKGROUND-COLOR: #F4F4F4; PADDING: 20PX; MARGIN: 0;">
 <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0">
     <TBODY>
     <TR>
         <TD>
-            <TABLE CLASS="CONTAINER" WIDTH="100%" CELLSPACING="0" CELLPADDING="0">
+            <TABLE CLASS="CONTAINER" WIDTH="100%" CELLSPACING="0" CELLPADDING="0" STYLE="MAX-WIDTH: 600PX; MARGIN: 0 AUTO; BACKGROUND-COLOR: #FFFFFF; BORDER-RADIUS: 25PX; BORDER: 1PX SOLID #DDDDDD; OVERFLOW: HIDDEN;">
                 <TBODY>
                 <TR>
-                    <TD CLASS="HEADER">
+                    <TD CLASS="HEADER" STYLE="BACKGROUND: LINEAR-GRADIENT(90DEG, #F4D35E 0%, #20A090 100%); COLOR: WHITE; PADDING: 20PX; TEXT-ALIGN: CENTER; FONT-SIZE: 24PX; FONT-WEIGHT: BOLD;">
                         본인인증
                     </TD>
                 </TR>
                 <TR>
-                    <TD CLASS="CONTENT">
+                    <TD CLASS="CONTENT" STYLE="PADDING: 20PX; FONT-SIZE: 16PX; COLOR: #333333;">
                         안녕하세요.<BR><BR>
                         아래 본인인증 링크를 클릭하시면 가입이 완료됩니다.<BR><BR>
-                        <DIV CLASS="TRANSLUCENT-LAYER">
+                        <DIV CLASS="TRANSLUCENT-LAYER" STYLE="BACKGROUND-COLOR: RGBA(255, 255, 255, 0.7); PADDING: 20PX; BORDER-RADIUS: 20PX; MARGIN: 20PX 0;">
                             <TABLE WIDTH="100%" STYLE="TEXT-ALIGN: CENTER;">
                                 <TBODY>
                                 <TR>
                                     <TD STYLE="FONT-SIZE: 32PX; FONT-WEIGHT: BOLD; COLOR: #333333; PADDING: 20PX; TEXT-ALIGN: CENTER;">
-                                        <A HREF="{{ auth_link }}" CLASS="AUTH-BUTTON">본인인증 확인</A>
+                                        <A HREF="{{ auth_link }}" CLASS="AUTH-BUTTON" STYLE="DISPLAY: INLINE-BLOCK; PADDING: 15PX 30PX; BORDER-RADIUS: 10PX; BACKGROUND-COLOR: #20A090; COLOR: WHITE; TEXT-DECORATION: NONE; FONT-WEIGHT: BOLD;">본인인증 확인</A>
                                     </TD>
                                 </TR>
                                 </TBODY>
@@ -93,7 +37,7 @@
                     </TD>
                 </TR>
                 <TR>
-                    <TD CLASS="FOOTER">- LOOPLABEL -</TD>
+                    <TD CLASS="FOOTER" STYLE="COLOR: #888888; FONT-SIZE: 14PX; TEXT-ALIGN: CENTER; PADDING: 10PX 0 30PX;">- LOOPLABEL -</TD>
                 </TR>
                 </TBODY>
             </TABLE>
