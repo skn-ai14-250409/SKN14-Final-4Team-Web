@@ -2,10 +2,9 @@ import json
 import os
 
 import requests
+from apiapp.models import ChatHistory
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
-
-from apiapp.models import ChatHistory
 from mainapp.models.like import Like
 
 

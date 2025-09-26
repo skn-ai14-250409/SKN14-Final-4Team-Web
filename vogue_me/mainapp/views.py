@@ -1,6 +1,7 @@
 # Create your views here.
 import json
 
+from django.utils import timezone
 from apiapp.models import ChatHistory
 from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Subquery, F
@@ -176,9 +177,30 @@ def delete_chats(request):
 
     return JsonResponse({"success": True})
 
+def time_since(df):
+    now  = timezone.now()
+    diff = now - df
+    hours = diff.seconds // 3600
+    if hours > 24:
+        return f"{diff.days}일 전"
+    if hours > 0:
+        return f"{hours}시간 전"
+    minutes = (diff.seconds % 3600) // 60
+    if minutes > 0:
+        return f"{minutes}분 전"
+    return "방금 전"
+
 def likes(request):
-    likes  = Like.objects.prefetch_related("search").filter(user=request.user)
-    styles = [like.search for like in likes]
-    return render(request, "app/mainapp/likes.html", {"liked_styles" : styles})
+    likes        = Like.objects.prefetch_related("search").filter(user=request.user)
+    liked_styles = []
+    for like in likes:
+        liked_styles.append({
+            'id'          : like.search.id,
+            'look_style'  : like.search.look_style,
+            'look_desc'   : like.search.look_desc,
+            'liked_at'    : time_since(like.liked_at),
+            'look_img_url':like.search.look_img_url,
+        })
+    return render(request, "app/mainapp/likes.html", {"liked_styles" : liked_styles})
 
 

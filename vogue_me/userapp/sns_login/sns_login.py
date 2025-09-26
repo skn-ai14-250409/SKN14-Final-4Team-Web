@@ -30,7 +30,7 @@ class SnsLogin:
 
     def get_json_response(self, url, params=None, headers=None):
         # response = requests.get(url, params, headers=headers)
-        response = requests.post(url, data=params, headers=headers)
+        response = requests.post(url, data=params, headers=headers, timeout=300)
         response.raise_for_status()
         return response.json()
 
