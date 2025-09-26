@@ -203,18 +203,6 @@
             justify-content: center;
         }
 
-        .home-indicator {
-            position: fixed;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 134px;
-            height: 5px;
-            background: #000;
-            border-radius: 2.5px;
-            z-index: 1001;
-        }
-
         /* 모바일 반응형 */
         @media (max-width: 767px) {
             body {
@@ -266,7 +254,7 @@
         </div>
         {% else %}
         <!-- 빈 상태 표시 (좋아요한 항목이 없을 때) -->
-        <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-state" id="emptyState">
             <div class="empty-icon">💙</div>
             <div class="empty-title">아직 좋아요한 항목이 없어요</div>
             <div class="empty-desc">채팅에서 마음에 드는 스타일을<br>좋아요 표시해보세요</div>

@@ -1,6 +1,7 @@
 {% extends "layout/base_content_only.html" %}
 
 {% load static %}
+{%  load humanize %}
 
 {% block title %}LoopLabel | {{ look.look_style }}{% endblock title %}
 
@@ -44,13 +45,13 @@
                     <div class="env-item">
                         <div class="env-icon water-icon">💧</div>
                         <div class="env-text">
-                            <div class="env-main">물 {{ water_saved }}L 절약</div>
+                            <div class="env-main">물 {{ water_saved_l }}L 절약</div>
                         </div>
                     </div>
                     <div class="env-item">
                         <div class="env-icon co2-icon">🌱</div>
                         <div class="env-text">
-                            <div class="env-main">CO<sub>2</sub> {{ co2_saved }}kg 감소</div>
+                            <div class="env-main">CO<sub>2</sub> {{ co2_saved_kg }}kg 감소</div>
                         </div>
                     </div>
                 </div>
@@ -65,17 +66,22 @@
                             <div class="related-image" style="background: url('{{ product.image_url }}') center/cover;"></div>
                         <div class="related-info">
                                 <div class="related-name">{{ product.name }}</div>
-                                <div class="related-desc">{{ product.details_intro }}</div>
-                                <div class="related-price">{{ product.price }}</div>
+                                <div class="related-price">
+                                    {% if product.currency == '₩' %}
+                                        {{ product.currency }}{{ product.price|floatformat:0|intcomma }}
+                                    {% else %}
+                                        {{ product.currency }}{{ product.price }}
+                                    {% endif %}
+                                </div>
                         </div>
                         <div class="related-actions">
-                            <button class="more-options">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <circle cx="12" cy="12" r="1"/>
-                                    <circle cx="19" cy="12" r="1"/>
-                                    <circle cx="5" cy="12" r="1"/>
-                                </svg>
-                            </button>
+{#                            <button class="more-options">#}
+{#                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">#}
+{#                                    <circle cx="12" cy="12" r="1"/>#}
+{#                                    <circle cx="19" cy="12" r="1"/>#}
+{#                                    <circle cx="5" cy="12" r="1"/>#}
+{#                                </svg>#}
+{#                            </button>#}
                                 <a href="{{ product.url }}" target="_blank" class="shop-btn">웹사이트</a>
                             </div>
                         </div>

@@ -5,6 +5,8 @@ from . import views as v
 app_name = 'mainapp'
 
 urlpatterns = [
+    path('robots.txt'       , v.robots_txt , name="robots_txt"),
+
     path(''                 , v.index , name="index"),
     path('detail/<int:id>'  , v.detail, name="detail"),
 

@@ -1,12 +1,11 @@
 # Create your views here.
 import json
 
+from apiapp.models import ChatHistory
 from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Subquery, F
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-
-from apiapp.models import ChatHistory
 from mainapp.models.influencer import Influencer
 from mainapp.models.like import Like
 from mainapp.models.search_history import SearchHistory
@@ -22,6 +21,10 @@ def __get_my_last_ai_info(ai_id):
         "image": last_ai.profile_img_url,
         "voice": last_ai.voice_info,
     }
+
+def robots_txt(request):
+    content = "User-agent: *\nDisallow: /\n"
+    return HttpResponse(content, content_type="text/plain")
 
 @login_required
 def index(request):
@@ -44,14 +47,16 @@ def detail(request, id):
         "like" : like
     }
     try:
-        impacts = [json.loads(item.product.impact) for item in items]
         water_saved = 0
         co2_saved   = 0
-        for impact in impacts:
-            water_saved += impact["water_saved_l"]
-            co2_saved   += impact["co2_saved_kg"]
-        context["water_saved"] = water_saved
-        context["co2_saved"]   = co2_saved
+        for item in items:
+            water = json.loads(item.product.water_saved_l)
+            co2   = json.loads(item.product.co2_saved_kg)
+
+            water_saved += water.get("water_saved_l", 0)
+            co2_saved += co2.get("co2_saved_kg", 0)
+        context["water_saved_l"] = round(water_saved, 2)
+        context["co2_saved_kg"]  = round(co2_saved, 2)
     except:
         pass
 
@@ -66,10 +71,16 @@ def survey(request):
             nickname = data.get('nickname') or form.cleaned_data.get('nickname')
             request.user.first_name = nickname
             request.user.save()
-            form.save()
+
+            member = form.save(commit=False)
+            member.survey_completed = True
+            member.save()
             result["status"] = True
         return JsonResponse(result)
     else:
+        if request.user.member.survey_completed:
+            return redirect("mainapp:profile")
+
         last_ai = __get_my_last_ai_info(request.user.member.last_ai_id)
         return render(request, "app/mainapp/survey.html", last_ai)
 
@@ -90,6 +101,7 @@ def chat(request):
         "all_ai"   : Influencer.objects.all(),
         "chat_log" : chat_log,
         "voice_enabled" : voice_enabled,
+        "ai_id"    : ai_id,
     }
     return render(request, "app/mainapp/chat.html", context)
 

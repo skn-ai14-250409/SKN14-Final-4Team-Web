@@ -461,6 +461,11 @@
             background: rgba(0,122,255,0.1);
         }
 
+        .wheel-item.dummy {
+            visibility: hidden;
+            height: 40px;
+        }
+
         .wheel-picker-overlay {
             position: absolute;
             top: 50%;
@@ -936,7 +941,6 @@
                 <div class="option-button" onclick="selectOption(this)" data-value="M">남성</div>
             </div>
             <div class="button-group">
-                <button class="nav-button prev-button" onclick="prevSurvey()">이전</button>
                 <button class="nav-button next-button" onclick="nextSurvey()">다음</button>
             </div>
         </div>
@@ -957,6 +961,8 @@
                 <div class="wheel-picker-wrapper">
                     <div class="wheel-picker">
                         <div class="wheel-column" id="dayWheel">
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
                             <div class="wheel-item" data-value="1">1</div>
                             <div class="wheel-item" data-value="2">2</div>
                             <div class="wheel-item" data-value="3">3</div>
@@ -988,8 +994,12 @@
                             <div class="wheel-item" data-value="29">29</div>
                             <div class="wheel-item" data-value="30">30</div>
                             <div class="wheel-item" data-value="31">31</div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
                         </div>
                         <div class="wheel-column" id="monthWheel">
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
                             <div class="wheel-item" data-value="1">1월</div>
                             <div class="wheel-item" data-value="2">2월</div>
                             <div class="wheel-item" data-value="3">3월</div>
@@ -1002,8 +1012,12 @@
                             <div class="wheel-item" data-value="10">10월</div>
                             <div class="wheel-item" data-value="11">11월</div>
                             <div class="wheel-item" data-value="12">12월</div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
                         </div>
                         <div class="wheel-column" id="yearWheel">
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
                             <div class="wheel-item" data-value="1950">1950</div>
                             <div class="wheel-item" data-value="1951">1951</div>
                             <div class="wheel-item" data-value="1952">1952</div>
@@ -1079,6 +1093,8 @@
                             <div class="wheel-item" data-value="2022">2022</div>
                             <div class="wheel-item" data-value="2023">2023</div>
                             <div class="wheel-item" data-value="2024">2024</div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
                         </div>
                     </div>
                     <div class="wheel-picker-overlay"></div>
@@ -1183,7 +1199,7 @@
             </div>
         </div>
     </div>
-
+    <audio id="aiAudio" preload="auto" playsinline></audio>
     <script>
         let currentSurvey = 1;
         const totalSurveys = 6; // 완료 화면 포함
@@ -1196,12 +1212,35 @@
         // 기본값 상수
         const DEFAULT_BIRTH = { day: 15, month: 6, year: 1990 };
 
+        const audioUrls = [
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_1.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_gender.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_birth.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_style.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_material.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_nickname.mp3",
+        ];
+        let currentAudioIndex = 0;
+        const audioEl = document.getElementById('aiAudio');
+
         // 각 wheel에 대한 프로그램적 스크롤 락
         const wheelScrollLock = {
             dayWheel: false,
             monthWheel: false,
             yearWheel: false,
         };
+
+        function playAudio(index) {
+            if (index < 0 || index >= audioUrls.length) return;
+            audioEl.src = audioUrls[index];
+            audioEl.muted = false;
+            audioEl.play().then(() => {
+                showAudioVisualization();
+            });
+        }
+        audioEl.addEventListener('ended', () => {
+            hideAudioVisualization();
+        });
 
         // 프로그램적으로 중앙에 맞추는 헬퍼
         function centerItem(wheel, item) {
@@ -1488,6 +1527,7 @@
                 // 다음 서베이 보이기
                 if (currentSurvey === totalSurveys) {
                     document.getElementById('surveyComplete').classList.remove('hidden');
+                    playAudio(5);
                     // 완료 페이지에서 폭죽 효과 시작
                     setTimeout(() => {
                         createConfetti();
@@ -1516,6 +1556,7 @@
                         document.getElementById(`survey${currentSurvey}`).classList.remove('hidden');
                         updateNextButton(); // 새 페이지의 버튼 상태 업데이트
                     }
+                    playAudio(currentSurvey - 1);
                 }
             }
         }
@@ -1920,8 +1961,8 @@
                         updateProgressBar();
                         updateNextButton();
                         console.log('Successfully moved from survey1 to survey2');
-                    } else {
-                        console.log('Survey1 or Survey2 not found');
+
+                        playAudio(1);
                     }
                 });
             } else {
@@ -1930,8 +1971,8 @@
             
             // 페이지 진입 시 음성 자동재생 (사용자 상호작용 후)
             setTimeout(() => {
-                playWelcomeSound();
-            }, 1000);
+               playAudio(0);
+            }, 500);
             
             // 모달 외부 클릭 시 모달 닫기
             const wheelModal = document.getElementById('wheelModal');

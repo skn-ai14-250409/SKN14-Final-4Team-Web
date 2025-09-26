@@ -323,18 +323,6 @@
             opacity: 0.7;
         }
 
-        .home-indicator {
-            position: fixed;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 134px;
-            height: 5px;
-            background: #000;
-            border-radius: 2.5px;
-            z-index: 1001;
-        }
-
         /* 모바일 반응형 */
         @media (max-width: 767px) {
             body {
@@ -373,23 +361,25 @@
         </div>
 
         <div class="chat-list">
-            {% for room in chat_rooms %}
-                <div class="chat-item" data-chat-id="{{ room.ai_id }}" onclick="goToChat('{{ room.ai_name }}', {{ room.ai_id }})">
-                    <div class="avatar-container">
-                        <div class="avatar" style="background-image:url('{{ room.ai_image }}');"></div>
-                        <div class="online-dot"></div>
-                    </div>
-                    <div class="chat-info">
-                        <div class="chat-header">
-                            <div class="chat-name">{{ room.ai_name }}</div>
-                            <div class="chat-time">{{ room.chat_time }}</div>
+            {% if chat_rooms %}
+                {% for room in chat_rooms %}
+                    <div class="chat-item" data-chat-id="{{ room.ai_id }}" onclick="goToChat('{{ room.ai_name }}', {{ room.ai_id }})">
+                        <div class="avatar-container">
+                            <div class="avatar" style="background-image:url('{{ room.ai_image }}');"></div>
+                            <div class="online-dot"></div>
                         </div>
-                        <div class="chat-preview">{{ room.chat_text }}</div>
+                        <div class="chat-info">
+                            <div class="chat-header">
+                                <div class="chat-name">{{ room.ai_name }}</div>
+                                <div class="chat-time">{{ room.chat_time }}</div>
+                            </div>
+                            <div class="chat-preview">{{ room.chat_text }}</div>
+                        </div>
                     </div>
-                </div>
-            {% empty %}
+                {% endfor %}
+            {% else %}
                 <h3 style="display:block; width:100%; text-align:center;">인플루언서를 선택하여 대화를 시작해보세요.</h3>
-            {% endfor %}
+            {% endif %}
 
         <!-- Delete Button -->
         <button class="delete-button" id="deleteButton" onclick="showDeleteModal()">삭제</button>
