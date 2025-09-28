@@ -1410,20 +1410,15 @@
             ];
             let round = 0;
             waiting_interval = setInterval(() => {
-                if( round > 7 ) {
-                    if(confirm("시간이 좀더 필요한데 쇼츠라도 보시겠어요?")) {
-                        //TODO 쇼츠 레이어팝업 보여주기
-                        alert("여기에 쇼츠 보여주기");
-                    } else {
-                        $mentWindow.textContent = "아무튼 조금만 더 기다려주시면 곧 결과를 알려드릴게요.";
-                        clearInterval(waiting_interval);
-                    }
+                if( round > 20 ) {
+                    $mentWindow.textContent = "아무튼 조금만 더 기다려주시면 곧 결과를 알려드릴게요.";
+                    clearInterval(waiting_interval);
                 } else {
                     let idx = parseInt(Math.random() * ments.length);
                     $mentWindow.textContent = ments[idx];
                     round++;
                 }
-            }, 3000);
+            }, 5000);
         }
 
         // 타이핑 인디케이터 표시/숨김
@@ -1670,12 +1665,20 @@
         function closeSidebar() {
             const sidebar = document.getElementById('sidebarMenu');
             const overlay = document.getElementById('sidebarOverlay');
-            const phone = document.querySelector('.phone-container');
+            const phone   = document.querySelector('.phone-container');
+            const inputArea = document.querySelector('.input-area');
 
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
             phone.classList.remove('sidebar-open'); // 스크롤 잠금 해제
+            inputArea.classList.remove('scrimmed');
         }
+
+        document.querySelector('.input-area').addEventListener('click',function (e){
+            if (document.querySelector('.phone-container').classList.contains('sidebar-open')){
+                closeSidebar();
+            }
+        });
 
         // Navigation Functions
         function navigateToProfile() {
