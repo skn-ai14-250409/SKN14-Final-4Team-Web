@@ -194,6 +194,7 @@
             overflow-x: hidden;
             min-height: 0;
             flex: 1;
+            scroll-behavior: smooth;
         }
 
         .welcome-container {
@@ -1276,7 +1277,7 @@
             <!-- Typing Indicator -->
             <div class="typing-indicator" id="typingIndicator">
                 <div class="typing-bubble">
-                    <span id="waiting-ment"></span>
+                    <span id="waiting-ment">답변을 준비하는 동안, 쇼츠 영상을 즐겨보세요.</span>
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
@@ -1487,10 +1488,10 @@
         // 타이핑 인디케이터 표시/숨김
         function showTypingIndicator() {
             document.getElementById('typingIndicator').classList.add('show');
-            scrollToBottom();
-
             {#waitingMent();#}
             youtube(channelId)
+            scrollToBottom();
+            setTimeout(scrollToBottom, 1000);
         }
 
         function hideTypingIndicator() {
