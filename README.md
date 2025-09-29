@@ -15,6 +15,11 @@
 pip install -r requirements.txt
 ```
 
+## DB migration 주의사항
+1. python manage.py makemigrations && python manage.py migrate 실행 후  
+   반드시 **`default_record.sql`** 파일의 쿼리를 실행해서 mainapp_influencer 테이블에 기본 레코드가 들어가있도록 해야 한다.  
+   mainapp_influencer 에 id=1 인 기본 레코드가 이미 있다면 수행하지 않아도 됨.
+
 
 ## 개인적으로 느낀점 정리
 ### 1. github action 과 docker build, Elastic beanstalk 로 CI/CD 를 구성할 때는,  

@@ -22,4 +22,6 @@ urlpatterns = [
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change/done/', v.password_change_done, name='password_change_done'),
     path('logout', v.logout, name="logout"),
+
+    path('profile/save', v.profile_save, name="profile_save"),
 ]

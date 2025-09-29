@@ -12,9 +12,11 @@ BASE_DIR   = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = 'django-insecure--b1q6+ymklxs)n#iqm5jlspl@=k-5$!r1hft=2_%nj27xbf!n3'
 DEBUG      = True
 
+SESSION_EXPIRE_SECONDS = 1800
+
 # ALLOWED_HOSTS 설정  ############################################
 ALLOWED_HOST  = os.getenv('ALLOWED_HOST', "127.0.0.1")
-ALLOWED_HOSTS = [ALLOWED_HOST, "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = [ALLOWED_HOST, ".looplabel.site", "127.0.0.1", "localhost"]
 
 # 기본 Django 설정### ############################################
 ROOT_URLCONF     = 'vogue_me.urls'
@@ -26,6 +28,8 @@ INSTALLED_APPS  = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    "csp",
 
     "mainapp",
     "userapp",
@@ -40,6 +44,7 @@ MIDDLEWARE      = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 TEMPLATES       = [
     {
@@ -57,10 +62,17 @@ TEMPLATES       = [
         },
     },
 ]
-DATABASES       = {
+DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("MYSQL_DATABASE", "20250901_looplabel"),   # DB 이름
+        'USER': os.getenv("MYSQL_USER", "admin"),              # DB 유저
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': os.getenv("MYSQL_HOST", "database-1.c386wgw8g00f.ap-northeast-2.rds.amazonaws.com"),
+        'PORT': os.getenv("MYSQL_PORT", "3306"),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -85,6 +97,44 @@ USE_I18N        = True
 USE_TZ          = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://*.looplabel.site",
+    "https://*.looplabel.site",
+]
+
+# CSP 정책 설정
+CSP_POLICY = {
+    'default-src': ["'self'"],
+
+    'frame-src': [
+        "'self'",
+        'https://www.youtube.com',
+        'https://www.youtube-nocookie.com',
+    ],
+
+    'script-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'https://www.youtube.com',
+        'https://s.ytimg.com',
+        'https://www.youtube-nocookie.com',
+    ],
+
+    'img-src': [
+        "'self'",
+        'https://i.ytimg.com',
+        'https://www.youtube.com',
+    ],
+
+    'media-src': [
+        'https://www.youtube.com',
+        'https://www.youtube-nocookie.com',
+    ],
+}
+
 
 # 정적 파일 ###########################################
 STATIC_URL = 'static/'
@@ -119,3 +169,5 @@ EMAIL_PORT = 465  # Or your SMTP port (e.g., 465 for SSL)
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    {% include "layout/meta.html" %}
+    {% include "layout/global_variables.html" %}
+    <title>프로필</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .mobile-container {
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding-bottom: 80px; /* 저장 버튼 공간 확보 */
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Profile Avatar */
+        .profile-avatar {
+            display: flex;
+            justify-content: center;
+            padding: 40px 0 30px;
+        }
+
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: ("{{ user.member.photo_url }}") no-repeat;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+
+        }
+
+        /* Form Fields */
+        .form-group {
+            margin: 0 20px 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f8f8f8;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007AFF;
+            background-color: white;
+        }
+
+        .form-input:read-only {
+            background-color: #f0f0f0;
+            color: #999;
+        }
+
+        /* Menu Items */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #f8f8f8;
+        }
+
+        .menu-item-text {
+            font-size: 16px;
+        }
+
+        .menu-arrow {
+            color: #999;
+            font-size: 18px;
+        }
+
+        /* Save Button Container */
+        .save-button-container {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            padding: 15px 20px;
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+            z-index: 100;
+        }
+
+        .save-button {
+            width: 100%;
+            background-color: #00C896;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .save-button:hover {
+            background-color: #00b085;
+        }
+
+        .save-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex !important;
+        }
+
+        /* Modal Container */
+        .modal-container {
+            background-color: white;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 375px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Header */
+        .modal-header {
+            position: relative;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            padding: 20px;
+        }
+
+        .modal-question {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Selection Options */
+        .selection-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            padding: 12px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            background-color: white;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: #00C896;
+            color: #00C896;
+        }
+
+        .option-btn.selected {
+            border-color: #00C896;
+            background-color: #00C896;
+            color: white;
+        }
+
+        /* Toast Message */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 0.9;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 767px) {
+            body {
+                padding: 0;
+            }
+            
+            .mobile-container {
+                width: 100vw;
+                max-width: none;
+                height: 100vh;
+                max-height: none;
+                box-shadow: none;
+                margin: 0;
+            }
+        }
+
+        /* 태블릿 */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .mobile-container {
+                max-width: 400px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 1024px) {
+            .mobile-container {
+                max-width: 420px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        {% csrf_token %}
+        <!-- Header -->
+        <div class="header">
+            <button class="back-btn">‹</button>
+            <div class="header-title">프로필</div>
+        </div>
+
+        <!-- Profile Avatar -->
+        <div class="profile-avatar">
+            <div class="avatar-circle" style="background-image:url('{{ user.member.photo_url }}');"></div>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="form-group">
+            <label class="form-label"></label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">👤</span>
+                <input type="text" class="form-input" id="name-input" style="padding-left: 50px;"  value="{{ user.member.nickname }}" placeholder="이름을 입력하세요">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label"></label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">📅</span>
+                <input type="text" id="birth-display" class="form-input" style="padding-left: 40px;"  value="{{ user.member.birthday }}" placeholder="MM/DD/YYYY" readonly onclick="return false;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label"></label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <span style="position: absolute; left: 12px; z-index: 1; font-size: 16px;">✉️</span>
+                <input type="email" class="form-input"  value="{{ user.username }}" readonly style="padding-left: 40px;">
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <div class="menu-item" onclick="return false;">
+            <span class="menu-item-text" id="gender-text">{% if user.member.gender == "M" %}남성{% else %}여성{% endif %}</span>
+        </div>
+
+        <div class="menu-item" onclick="openStyleModal()">
+            <span class="menu-item-text" id="style-text">
+                {% if user.member.prefer == "minimal" %}미니멀 (깔끔, 심플)
+                {% elif user.member.prefer == "casual" %}캐주얼 (편안, 데일리)
+                {% elif user.member.prefer == "formal" %}포멀 (정장, 단정)
+                {% elif user.member.prefer == "feminine" %}페미닌 (부드럽고 여성스러움)
+                {% elif user.member.prefer == "street" %}스트리트 (트렌디, 자유분방)
+                {% else %}-
+                {% endif %}
+            </span>
+            <span class="menu-arrow">›</span>
+        </div>
+
+        <div class="menu-item" onclick="openFabricModal()">
+            <span class="menu-item-text" id="fabric-text">
+                {% if user.member.prefer_material == "recycled polyester" %}재활용 플리에스터 (rPET)
+                {% elif user.member.prefer_material == "organic cotton" %}오가닉 코튼
+                {% elif user.member.prefer_material == "recycled wool/nilon" %}리사이클 울/나일론
+                {% else %}특별히 없음, 다양한 소재 좋아요
+                {% endif %}
+            </span>
+            <span class="menu-arrow">›</span>
+        </div>
+
+        <!-- Save Button -->
+        <div class="save-button-container">
+            <button class="save-button" onclick="saveProfile()" disabled>저장하기</button>
+        </div>
+    </div>
+
+    <!-- Style Selection Modal -->
+    <div class="modal-overlay" id="style-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">선호 스타일</h3>
+                <button class="modal-close" onclick="closeModal('style-modal')">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-question">평소에 자주 입으시는 스타일이 있으시나요?</div>
+                <div class="selection-options">
+                    <button class="option-btn {% if user.member.prefer == "minimal"  %}selected{% endif %}" data-value="minimal"  onclick="selectStyle(this)">미니멀</button>
+                    <button class="option-btn {% if user.member.prefer == "casual"   %}selected{% endif %}" data-value="casual"   onclick="selectStyle(this)">캐주얼</button>
+                    <button class="option-btn {% if user.member.prefer == "formal"   %}selected{% endif %}" data-value="formal"   onclick="selectStyle(this)">포멀</button>
+                    <button class="option-btn {% if user.member.prefer == "feminine" %}selected{% endif %}" data-value="feminine" onclick="selectStyle(this)">페미닌</button>
+                    <button class="option-btn {% if user.member.prefer == "street"   %}selected{% endif %}" data-value="street"   onclick="selectStyle(this)">스트릿</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fabric Selection Modal -->
+    <div class="modal-overlay" id="fabric-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">선호 소재</h3>
+                <button class="modal-close" onclick="closeModal('fabric-modal')">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-question">평소에 자주 입으시는 소재가 있으시나요?</div>
+                <div class="selection-options">
+                    <button class="option-btn {% if user.member.prefer_material == "recycled polyester" %}selected{% endif %}"  data-value="recycled polyester"  onclick="selectFabric(this)">재활용 폴리에스터</button>
+                    <button class="option-btn {% if user.member.prefer_material == "organic cotton" %}selected{% endif %}"      data-value="organic cotton"      onclick="selectFabric(this)">오가닉 코튼</button>
+                    <button class="option-btn {% if user.member.prefer_material == "recycled wool/nilon" %}selected{% endif %}" data-value="recycled wool/nilon" onclick="selectFabric(this)">리사이클 울 / 나일론</button>
+                    <button class="option-btn {% if user.member.prefer_material == "no preference" %}selected{% endif %}"       data-value="no preference"       onclick="selectFabric(this)">소재 무관</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Message -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+
+        // 초기 데이터를 저장하여 변경사항 비교용
+        let originalData = {
+            name: '{{ user.member.nickname }}',
+            birthDate: {
+                year: '{{ user.member.birthday.year }}',
+                month: '{{ user.member.birthday.month }}',
+                day: '{{ user.member.birthday.day }}'
+            },
+            email: '{{ user.username }}',
+            gender: '{{ user.member.gender }}',
+            style: '{{ user.member.prefer }}',
+            fabric: '{{ user.member.prefer_material }}'
+        };
+        // 프로필 데이터를 저장할 객체
+        let profileData = {...originalData};
+
+        // 변경사항 감지 함수
+        function hasChanges() {
+            return (
+                profileData.name !== originalData.name ||
+                profileData.style !== originalData.style ||
+                profileData.fabric !== originalData.fabric
+            );
+        }
+
+        // 저장 버튼 상태 업데이트 함수
+        function updateSaveButton() {
+            const saveButton = document.querySelector('.save-button');
+            if (hasChanges()) {
+                saveButton.disabled = false;
+                saveButton.style.backgroundColor = '#00C896';
+                saveButton.style.cursor = 'pointer';
+            } else {
+                saveButton.disabled = true;
+                saveButton.style.backgroundColor = '#ccc';
+                saveButton.style.cursor = 'not-allowed';
+            }
+        }
+
+
+        // Modal Functions
+        function openStyleModal() {
+            document.getElementById('style-modal').classList.add('show');
+        }
+
+        function openFabricModal() {
+            document.getElementById('fabric-modal').classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Selection Functions - 선택 즉시 반영 및 모달 닫기
+        function selectStyle(button) {
+            const container = button.closest('.selection-options');
+            container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            // 데이터 업데이트
+            profileData.style = button.dataset.value;
+            let styleText = button.dataset.value;
+            switch(styleText) {
+                case "minimal"  : styleText = "미니멀";   break;
+                case "casual"   : styleText = "캐주얼";   break;
+                case "formal"   : styleText = "포멀";     break;
+                case "feminine" : styleText = "페미닌";   break;
+                case "street"   : styleText = "스트리트"; break;
+            }
+            document.getElementById('style-text').textContent = styleText;
+            
+            // 변경사항 감지
+            updateSaveButton();
+            
+            // 모달 자동 닫기
+            setTimeout(() => closeModal('style-modal'), 300);
+        }
+
+        function selectFabric(button) {
+            const container = button.closest('.selection-options');
+            container.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            // 데이터 업데이트
+            let value = button.dataset.value;
+            profileData.fabric = value;
+            switch(value) {
+                case "recycled polyester"   : value = "재활용 플리에스터";  break;
+                case "organic cotton"       : value = "오가닉 코튼";        break;
+                case "recycled wool/nilon"  : value = "리사이클 울/나일론"; break;
+                default                     : value = "소재 무관";
+            }
+            document.getElementById('fabric-text').textContent = value;
+            
+            // 변경사항 감지
+            updateSaveButton();
+            
+            // 모달 자동 닫기
+            setTimeout(() => closeModal('fabric-modal'), 300);
+        }
+
+        // 통합 저장 함수
+        function saveProfile() {
+            // 이름 입력값 가져오기
+            profileData.name = document.getElementById('name-input').value || '이름을 입력하세요';
+            
+            // 저장 버튼 비활성화 (중복 클릭 방지)
+            const saveButton = document.querySelector('.save-button');
+            saveButton.disabled = true;
+            saveButton.textContent = '저장 중...';
+
+            profileData["nickname"]        = profileData["name"];
+            profileData["prefer"]          = profileData["style"];
+            profileData["prefer_material"] = profileData["fabric"];
+
+            fetch('/user/profile/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', "X-CSRFToken": getCookie("csrftoken") },
+                credentials: "include",
+                body: JSON.stringify(profileData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showToast('프로필이 저장되었습니다.');
+                saveButton.disabled = false;
+                saveButton.textContent = '저장하기';
+                updateSaveButton();
+            })
+            .catch(error => {
+                showToast('저장 중 오류가 발생했습니다.');
+                saveButton.disabled = false;
+                saveButton.textContent = '저장하기';
+                updateSaveButton();
+            });
+        }
+
+        // 토스트 메시지 표시 함수
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // 초기 표시값 세팅
+            document.getElementById('birth-display').value = `${profileData.birthDate.month}/${profileData.birthDate.day}/${profileData.birthDate.year}`;
+
+            // 이름 입력 필드 변경 감지
+            document.getElementById('name-input').addEventListener('input', function(e) {
+                profileData.name = e.target.value;
+                updateSaveButton(); // 변경사항 감지
+            });
+
+            // 초기 저장 버튼 상태 설정 (비활성화)
+            updateSaveButton();
+
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('show');
+                    }
+                });
+            });
+        });
+
+        // Back button functionality
+        document.querySelector('.back-btn').addEventListener('click', function() {
+            history.back();
+        });
+    </script>
+</body>
+</html>

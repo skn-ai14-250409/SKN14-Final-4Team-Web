@@ -26,12 +26,8 @@
         {% block style %}{% endblock style %}
     </head>
     <body>
-        <div class="contentBox">
-            {# Content 블럭 ##################################################}
-            {% block content %}{% endblock %}
-        </div>
-
-{#        {% include "./form_error_toast.html" %}#}
+        {# Content 블럭 ##################################################}
+        {% block content %}{% endblock %}
 
         {# Bootstrap JS, Popper JS #}
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

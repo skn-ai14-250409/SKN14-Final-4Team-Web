@@ -28,7 +28,7 @@ class LoginAuth(models.Model):
             "auth_link" : "http://"+request.META['HTTP_HOST'] + reverse('userapp:verify_auth_link', kwargs={"user_id":user.id, "encrypted_code" : new_auth.get_encrypted_code()}),
             "due_time" : new_auth.expires_at.strftime("%Y.%m.%d %H:%M:%S")
         }
-        send_mail_with(user.email, "[SuPe] 본인확인 메일", MailForm.AUTH_LINK, context)
+        send_mail_with(user.email, "[LoopLabel] 본인확인 메일", MailForm.AUTH_LINK, context)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

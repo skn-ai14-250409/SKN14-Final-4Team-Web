@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    {% include "layout/meta.html" %}
+    {% include "layout/global_variables.html" %}
+    <title>진경 AI 어시스턴트 온보딩</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Pretendard Variable", Pretendard;
+            background: #F2F7FB;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 375px; /* 모바일 기본 사이즈 */
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* 태블릿 사이즈 (768px 이상) */
+        @media (min-width: 768px) {
+            body {
+                padding: 24px;
+            }
+            
+            .container {
+                max-width: 400px;
+            }
+        }
+
+        /* 데스크톱 사이즈 (1024px 이상) */
+        @media (min-width: 1024px) {
+            body {
+                padding: 32px;
+            }
+            
+            .container {
+                max-width: 420px;
+            }
+        }
+
+        .ai-card {
+            background: #3a4a5c;
+            border-radius: 20px;
+            padding: 12px;
+            text-align: center;
+            margin: 0;
+            width: 100%;
+            max-width: 240px;
+            height: 280px;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* 태블릿에서 AI 카드 크기 조정 */
+        @media (min-width: 768px) {
+            .ai-card {
+                max-width: 260px;
+                height: 300px;
+                padding: 14px;
+            }
+        }
+
+        /* 데스크톱에서 AI 카드 크기 조정 */
+        @media (min-width: 1024px) {
+            .ai-card {
+                max-width: 280px;
+                height: 320px;
+                padding: 16px;
+            }
+        }
+
+        .ai-card::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            height: 35px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, transparent 80%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        /* 태블릿에서 타원형 그림자 크기 조정 */
+        @media (min-width: 768px) {
+            .ai-card::after {
+                width: 340px;
+            }
+        }
+
+        /* 데스크톱에서 타원형 그림자 크기 조정 */
+        @media (min-width: 1024px) {
+            .ai-card::after {
+                width: 360px;
+            }
+        }
+
+        .profile-image {
+            width: 210px;
+            height: 210px;
+            border-radius: 20px;
+            background: #d4c4a8;
+            margin: 0 auto 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* 태블릿에서 프로필 이미지 크기 조정 */
+        @media (min-width: 768px) {
+            .profile-image {
+                width: 230px;
+                height: 230px;
+                border-radius: 22px;
+            }
+        }
+
+        /* 데스크톱에서 프로필 이미지 크기 조정 */
+        @media (min-width: 1024px) {
+            .profile-image {
+                width: 250px;
+                height: 250px;
+                border-radius: 24px;
+            }
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ai-name {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 0;
+        }
+
+        .leaf-icon {
+            color: #4ade80;
+            font-size: 20px;
+        }
+
+        .audio-visualizer {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .sound-wave {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 2px;
+            animation: waveAnimation 1.2s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) {
+            height: 8px;
+            animation-delay: 0s;
+        }
+
+        .wave-bar:nth-child(2) {
+            height: 12px;
+            animation-delay: 0.1s;
+        }
+
+        .wave-bar:nth-child(3) {
+            height: 16px;
+            animation-delay: 0.2s;
+        }
+
+        .wave-bar:nth-child(4) {
+            height: 12px;
+            animation-delay: 0.3s;
+        }
+
+        .wave-bar:nth-child(5) {
+            height: 8px;
+            animation-delay: 0.4s;
+        }
+
+        @keyframes waveAnimation {
+            0%, 100% {
+                transform: scaleY(0.3);
+                opacity: 0.4;
+            }
+            50% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .audio-visualizer.playing .wave-bar {
+            background: rgba(255,255,255,0.9);
+            animation-duration: 0.6s;
+        }
+
+        .audio-visualizer.silent .wave-bar {
+            background: rgba(255,255,255,0.4);
+            animation-duration: 2s;
+        }
+
+        .ai-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 210px;
+            margin-top: 5px;
+        }
+
+        /* 태블릿에서 ai-info 너비 조정 */
+        @media (min-width: 768px) {
+            .ai-info {
+                width: 230px;
+            }
+        }
+
+        /* 데스크톱에서 ai-info 너비 조정 */
+        @media (min-width: 1024px) {
+            .ai-info {
+                width: 250px;
+            }
+        }
+
+
+        .survey-card {
+            background: #3CAA92;
+            border-radius: 25px;
+            padding: 25px 25px;
+            color: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width: 100%;
+            height: calc(100vh - 320px);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 태블릿에서 설문 카드 패딩 조정 */
+        @media (min-width: 768px) {
+            .survey-card {
+                padding: 28px 28px;
+                height: calc(100vh - 340px);
+            }
+        }
+
+        /* 데스크톱에서 설문 카드 패딩 조정 */
+        @media (min-width: 1024px) {
+            .survey-card {
+                padding: 32px 32px;
+                height: calc(100vh - 360px);
+            }
+        }
+
+        .survey-card.complete {
+            background: linear-gradient(90deg, #F4D35E 0%, #20A090 100%);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 2px;
+            padding: 2px;
+        }
+
+        .progress-segment {
+            flex: 1;
+            height: 100%;
+            background: rgba(255,255,255,0.4);
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+        }
+
+        .progress-segment.filled {
+            background: white;
+            height: 4px;
+        }
+
+        .survey-title {
+            font-size: 17px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* 태블릿에서 텍스트 크기 조정 */
+        @media (min-width: 768px) {
+            .survey-title {
+                font-size: 18px;
+            }
+            
+            .option-button {
+                font-size: 16px;
+                padding: 16px 20px;
+            }
+        }
+
+        /* 데스크톱에서 텍스트 크기 조정 */
+        @media (min-width: 1024px) {
+            .survey-title {
+                font-size: 19px;
+            }
+            
+            .option-button {
+                font-size: 17px;
+                padding: 18px 22px;
+            }
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .option-button {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-button.selected {
+            background: white;
+            color: #0B1220;
+            border-color: white;
+            font-weight: 600;
+        }
+
+        .option-button:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        .option-button.selected:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        /* Wheel Picker Styles - Custom Implementation */
+        .date-picker-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .wheel-picker-wrapper {
+            position: relative;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 280px;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .wheel-picker {
+            display: flex;
+            justify-content: space-between;
+            height: 100%;
+            position: relative;
+        }
+
+        .wheel-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 0 10px;
+        }
+
+        .wheel-column::-webkit-scrollbar {
+            display: none;
+        }
+
+        .wheel-item {
+            padding: 8px 12px;
+            margin: 2px 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+            font-weight: 400;
+            text-align: center;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .wheel-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+        }
+
+        .wheel-item.selected {
+            color: #007AFF;
+            font-weight: 600;
+            background: rgba(0,122,255,0.1);
+        }
+
+        .wheel-item.dummy {
+            visibility: hidden;
+            height: 40px;
+        }
+
+        .wheel-picker-overlay {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 32px;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0.1) 0%,
+                transparent 20%,
+                transparent 80%,
+                rgba(255,255,255,0.1) 100%
+            );
+            pointer-events: none;
+            transform: translateY(-50%);
+            border-radius: 6px;
+        }
+
+        .date-picker-hidden {
+            display: none;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .wheel-picker-wrapper {
+                min-width: 260px;
+                height: 180px;
+                padding: 15px;
+            }
+            
+            .wheel-item {
+                font-size: 15px;
+                padding: 6px 10px;
+                min-height: 28px;
+            }
+        }
+
+        /* Touch scrolling improvements */
+        .wheel-column {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Wheel Modal Styles */
+        .wheel-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .wheel-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 0;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-options {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-option {
+            padding: 15px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .modal-option:hover {
+            background: #f8f9fa;
+            color: #3CAA92;
+        }
+
+        .modal-option:last-child {
+            border-bottom: none;
+        }
+
+        .modal-option.selected {
+            background: #3CAA92;
+            color: white;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .modal-header {
+                padding: 15px 20px;
+            }
+            
+            .modal-option {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+        }
+
+        /* 처음 한 프레임 숨기되 레이아웃은 유지 */
+        .invisible { visibility: hidden; }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 9px;
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prev-button {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .next-button {
+            background: white;
+            color: #0B1220;
+        }
+
+        .prev-button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .next-button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .complete-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .complete-icon {
+            font-size: 48px;
+            margin-bottom: 0;
+        }
+
+        .complete-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .complete-subtitle {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* SurveyComplete의 prev-button에만 더 넓은 크기 적용 */
+        #surveyComplete .prev-button {
+            padding: 12px 30px;
+            white-space: nowrap;
+        }
+
+        .complete-message {
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.25);
+        }
+
+        .final-button {
+            background: white;
+            color: #0B1220;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .final-button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 기본 애니메이션 */
+        .survey-card {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Survey1 특별 애니메이션 - 카드 reveal 후에 나타남 */
+        #survey1 {
+            opacity: 0;
+            animation: slideUpFromBottom 0.8s ease-out 2.5s both;
+        }
+
+        @keyframes slideUpFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(100vh);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* AI 카드 전체 등장 애니메이션 */
+        .ai-card {
+            animation: fadeInScale 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 폭죽 애니메이션 - 카드 축하 효과 제거 */
+        .survey-card.complete {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        /* 폭죽 파티클 효과 - 화려하게 업그레이드 */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 1.5s linear forwards;
+            box-shadow: 0 0 6px rgba(255, 107, 107, 0.6);
+        }
+
+        .confetti:nth-child(2n) {
+            background: #4ecdc4;
+            animation-delay: 0.2s;
+            box-shadow: 0 0 6px rgba(78, 205, 196, 0.6);
+        }
+
+        .confetti:nth-child(3n) {
+            background: #45b7d1;
+            animation-delay: 0.4s;
+            box-shadow: 0 0 6px rgba(69, 183, 209, 0.6);
+        }
+
+        .confetti:nth-child(4n) {
+            background: #f9ca24;
+            animation-delay: 0.6s;
+            box-shadow: 0 0 6px rgba(249, 202, 36, 0.6);
+        }
+
+        .confetti:nth-child(5n) {
+            background: #f0932b;
+            animation-delay: 0.8s;
+            box-shadow: 0 0 6px rgba(240, 147, 43, 0.6);
+        }
+
+        .confetti:nth-child(6n) {
+            background: #eb4d4b;
+            animation-delay: 1s;
+            box-shadow: 0 0 6px rgba(235, 77, 75, 0.6);
+        }
+
+        .confetti:nth-child(7n) {
+            background: #6c5ce7;
+            animation-delay: 1.2s;
+            box-shadow: 0 0 6px rgba(108, 92, 231, 0.6);
+        }
+
+        .confetti:nth-child(8n) {
+            background: #00d2d3;
+            animation-delay: 1.4s;
+            box-shadow: 0 0 6px rgba(0, 210, 211, 0.6);
+        }
+
+        .confetti:nth-child(9n) {
+            background: #ff9ff3;
+            animation-delay: 1.6s;
+            box-shadow: 0 0 6px rgba(255, 159, 243, 0.6);
+        }
+
+        .confetti:nth-child(10n) {
+            background: #54a0ff;
+            animation-delay: 1.8s;
+            box-shadow: 0 0 6px rgba(84, 160, 255, 0.6);
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0.8;
+            }
+            30% {
+                transform: translateY(120px) rotate(45deg) scale(1);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(240px) rotate(90deg) scale(0.9);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(400px) rotate(180deg) scale(0.6);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- AI 프로필 카드 -->
+        <div class="ai-card">
+            <div class="profile-image">
+                <img src="{{ image }}" alt="AI 어시스턴트 {{ name }}">
+            </div>
+            <div class="ai-info">
+            <div class="ai-name">
+                {{ name }} <span class="leaf-icon">🌿</span>
+            </div>
+            <div class="audio-visualizer" id="audioVisualizer">
+                <div class="sound-wave">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- 서베이 1: 초기 소개 -->
+        <div id="survey1" class="survey-card">
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="survey-title">
+                안녕하세요! 저는 재활용 소재로 스타일을 제안하는 LoopLabel AI 어시스턴트 진경이에요.<br><br>
+                지구를 지키면서도 멋스러운 패션을 함께 찾아드릴게요. ✨<br><br>
+                이제 몇 가지 질문으로 당신의 취향을 알아가 볼게요. [설문 시작하기] 버튼을 눌러 시작해볼까요?
+            </div>
+            <div class="button-group">
+                <div></div>
+                <button class="nav-button next-button" id="survey1NextBtn">설문 시작하기</button>
+            </div>
+        </div>
+
+        <!-- 서베이 2: 성별 -->
+        <div id="survey2" class="survey-card hidden">
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="survey-title">
+                먼저, 어떤 옷 스타일을 주로 찾으세요?
+            </div>
+            <div class="option-group" data-id="gender">
+                <div class="option-button" onclick="selectOption(this)" data-value="F">여성</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="M">남성</div>
+            </div>
+            <div class="button-group">
+                <button class="nav-button next-button" onclick="nextSurvey()">다음</button>
+            </div>
+        </div>
+
+        <!-- 서베이 3: 연령대 -->
+        <div id="survey3" class="survey-card hidden">
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="survey-title">
+                생년월일을 알려주시면, 더 잘 맞는 스타일을 제안드릴 수 있어요.
+            </div>
+            <div class="date-picker-container">
+                <div class="wheel-picker-wrapper">
+                    <div class="wheel-picker">
+                        <div class="wheel-column" id="dayWheel">
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item" data-value="1">1</div>
+                            <div class="wheel-item" data-value="2">2</div>
+                            <div class="wheel-item" data-value="3">3</div>
+                            <div class="wheel-item" data-value="4">4</div>
+                            <div class="wheel-item" data-value="5">5</div>
+                            <div class="wheel-item" data-value="6">6</div>
+                            <div class="wheel-item" data-value="7">7</div>
+                            <div class="wheel-item" data-value="8">8</div>
+                            <div class="wheel-item" data-value="9">9</div>
+                            <div class="wheel-item" data-value="10">10</div>
+                            <div class="wheel-item" data-value="11">11</div>
+                            <div class="wheel-item" data-value="12">12</div>
+                            <div class="wheel-item" data-value="13">13</div>
+                            <div class="wheel-item" data-value="14">14</div>
+                            <div class="wheel-item" data-value="15">15</div>
+                            <div class="wheel-item" data-value="16">16</div>
+                            <div class="wheel-item" data-value="17">17</div>
+                            <div class="wheel-item" data-value="18">18</div>
+                            <div class="wheel-item" data-value="19">19</div>
+                            <div class="wheel-item" data-value="20">20</div>
+                            <div class="wheel-item" data-value="21">21</div>
+                            <div class="wheel-item" data-value="22">22</div>
+                            <div class="wheel-item" data-value="23">23</div>
+                            <div class="wheel-item" data-value="24">24</div>
+                            <div class="wheel-item" data-value="25">25</div>
+                            <div class="wheel-item" data-value="26">26</div>
+                            <div class="wheel-item" data-value="27">27</div>
+                            <div class="wheel-item" data-value="28">28</div>
+                            <div class="wheel-item" data-value="29">29</div>
+                            <div class="wheel-item" data-value="30">30</div>
+                            <div class="wheel-item" data-value="31">31</div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
+                        </div>
+                        <div class="wheel-column" id="monthWheel">
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item" data-value="1">1월</div>
+                            <div class="wheel-item" data-value="2">2월</div>
+                            <div class="wheel-item" data-value="3">3월</div>
+                            <div class="wheel-item" data-value="4">4월</div>
+                            <div class="wheel-item" data-value="5">5월</div>
+                            <div class="wheel-item" data-value="6">6월</div>
+                            <div class="wheel-item" data-value="7">7월</div>
+                            <div class="wheel-item" data-value="8">8월</div>
+                            <div class="wheel-item" data-value="9">9월</div>
+                            <div class="wheel-item" data-value="10">10월</div>
+                            <div class="wheel-item" data-value="11">11월</div>
+                            <div class="wheel-item" data-value="12">12월</div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
+                        </div>
+                        <div class="wheel-column" id="yearWheel">
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item" data-value="1950">1950</div>
+                            <div class="wheel-item" data-value="1951">1951</div>
+                            <div class="wheel-item" data-value="1952">1952</div>
+                            <div class="wheel-item" data-value="1953">1953</div>
+                            <div class="wheel-item" data-value="1954">1954</div>
+                            <div class="wheel-item" data-value="1955">1955</div>
+                            <div class="wheel-item" data-value="1956">1956</div>
+                            <div class="wheel-item" data-value="1957">1957</div>
+                            <div class="wheel-item" data-value="1958">1958</div>
+                            <div class="wheel-item" data-value="1959">1959</div>
+                            <div class="wheel-item" data-value="1960">1960</div>
+                            <div class="wheel-item" data-value="1961">1961</div>
+                            <div class="wheel-item" data-value="1962">1962</div>
+                            <div class="wheel-item" data-value="1963">1963</div>
+                            <div class="wheel-item" data-value="1964">1964</div>
+                            <div class="wheel-item" data-value="1965">1965</div>
+                            <div class="wheel-item" data-value="1966">1966</div>
+                            <div class="wheel-item" data-value="1967">1967</div>
+                            <div class="wheel-item" data-value="1968">1968</div>
+                            <div class="wheel-item" data-value="1969">1969</div>
+                            <div class="wheel-item" data-value="1970">1970</div>
+                            <div class="wheel-item" data-value="1971">1971</div>
+                            <div class="wheel-item" data-value="1972">1972</div>
+                            <div class="wheel-item" data-value="1973">1973</div>
+                            <div class="wheel-item" data-value="1974">1974</div>
+                            <div class="wheel-item" data-value="1975">1975</div>
+                            <div class="wheel-item" data-value="1976">1976</div>
+                            <div class="wheel-item" data-value="1977">1977</div>
+                            <div class="wheel-item" data-value="1978">1978</div>
+                            <div class="wheel-item" data-value="1979">1979</div>
+                            <div class="wheel-item" data-value="1980">1980</div>
+                            <div class="wheel-item" data-value="1981">1981</div>
+                            <div class="wheel-item" data-value="1982">1982</div>
+                            <div class="wheel-item" data-value="1983">1983</div>
+                            <div class="wheel-item" data-value="1984">1984</div>
+                            <div class="wheel-item" data-value="1985">1985</div>
+                            <div class="wheel-item" data-value="1986">1986</div>
+                            <div class="wheel-item" data-value="1987">1987</div>
+                            <div class="wheel-item" data-value="1988">1988</div>
+                            <div class="wheel-item" data-value="1989">1989</div>
+                            <div class="wheel-item" data-value="1990">1990</div>
+                            <div class="wheel-item" data-value="1991">1991</div>
+                            <div class="wheel-item" data-value="1992">1992</div>
+                            <div class="wheel-item" data-value="1993">1993</div>
+                            <div class="wheel-item" data-value="1994">1994</div>
+                            <div class="wheel-item" data-value="1995">1995</div>
+                            <div class="wheel-item" data-value="1996">1996</div>
+                            <div class="wheel-item" data-value="1997">1997</div>
+                            <div class="wheel-item" data-value="1998">1998</div>
+                            <div class="wheel-item" data-value="1999">1999</div>
+                            <div class="wheel-item" data-value="2000">2000</div>
+                            <div class="wheel-item" data-value="2001">2001</div>
+                            <div class="wheel-item" data-value="2002">2002</div>
+                            <div class="wheel-item" data-value="2003">2003</div>
+                            <div class="wheel-item" data-value="2004">2004</div>
+                            <div class="wheel-item" data-value="2005">2005</div>
+                            <div class="wheel-item" data-value="2006">2006</div>
+                            <div class="wheel-item" data-value="2007">2007</div>
+                            <div class="wheel-item" data-value="2008">2008</div>
+                            <div class="wheel-item" data-value="2009">2009</div>
+                            <div class="wheel-item" data-value="2010">2010</div>
+                            <div class="wheel-item" data-value="2011">2011</div>
+                            <div class="wheel-item" data-value="2012">2012</div>
+                            <div class="wheel-item" data-value="2013">2013</div>
+                            <div class="wheel-item" data-value="2014">2014</div>
+                            <div class="wheel-item" data-value="2015">2015</div>
+                            <div class="wheel-item" data-value="2016">2016</div>
+                            <div class="wheel-item" data-value="2017">2017</div>
+                            <div class="wheel-item" data-value="2018">2018</div>
+                            <div class="wheel-item" data-value="2019">2019</div>
+                            <div class="wheel-item" data-value="2020">2020</div>
+                            <div class="wheel-item" data-value="2021">2021</div>
+                            <div class="wheel-item" data-value="2022">2022</div>
+                            <div class="wheel-item" data-value="2023">2023</div>
+                            <div class="wheel-item" data-value="2024">2024</div>
+                            <div class="wheel-item dummy"></div>
+                            <div class="wheel-item dummy"></div>
+                        </div>
+                    </div>
+                    <div class="wheel-picker-overlay"></div>
+                </div>
+                <input type="hidden" id="birthDate" class="date-picker-hidden">
+            </div>
+            
+            <!-- Wheel 선택 모달 -->
+            <div class="wheel-modal" id="wheelModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle">선택하세요</h3>
+                        <button class="modal-close" onclick="closeWheelModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-options" id="modalOptions">
+                            <!-- 동적으로 옵션들이 추가됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="nav-button prev-button" onclick="prevSurvey()">이전</button>
+                <button class="nav-button next-button" onclick="nextSurvey()">다음</button>
+            </div>
+        </div>
+
+        <!-- 서베이 4: 스타일 가이드 -->
+        <div id="survey4" class="survey-card hidden">
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="survey-title">
+                평소 좋아하는 스타일 키워드를 골라주세요.
+            </div>
+            <div class="option-group" data-id="style">
+                <div class="option-button" onclick="selectOption(this)" data-value="minimal">미니멀 (깔끔, 심플)</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="casual">캐쥬얼 (편안, 데일리)</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="formal">포멀 (정장, 단정)</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="feminine">페미닌 (부드럽고 여성스러움)</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="street">스트리트 (트렌디, 자유분방)</div>
+            </div>
+            <div class="button-group">
+                <button class="nav-button prev-button" onclick="prevSurvey()">이전</button>
+                <button class="nav-button next-button" onclick="nextSurvey()">다음</button>
+            </div>
+        </div>
+
+        <!-- 서베이 5: 선호하는 소재 -->
+        <div id="survey5" class="survey-card hidden">
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="survey-title">
+                특별히 선호하는 소재가 있나요?
+            </div>
+            <div class="option-group" data-id="material">
+                <div class="option-button" onclick="selectOption(this)" data-value="recycled polyester">재활용 플리에스터 (rPET)</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="organic cotton">오가닉 코튼</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="recycled wool/nilon">리사이클 울/나일론</div>
+                <div class="option-button" onclick="selectOption(this)" data-value="no preference">특별히 없음, 다양한 소재 좋아요</div>
+            </div>
+            <div class="button-group">
+                <button class="nav-button prev-button" onclick="prevSurvey()">이전</button>
+                <button class="nav-button next-button" onclick="nextSurvey()">다음</button>
+            </div>
+        </div>
+
+        <!-- 서베이 완료 -->
+        <div id="surveyComplete" class="survey-card complete hidden">
+            {% csrf_token %}
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="complete-header">
+            <div class="complete-icon">🎉</div>
+            <div class="complete-title">설문 완료!</div>
+            </div>
+            <div class="complete-subtitle">
+                우리 더 친해지려면, 제가 뭐라고 불러드리면 좋을까요?
+            </div>
+            <div class="complete-message">
+                닉네임을 입력하면 바로 대화가 이어져요 😍
+            </div>
+            <input type="text" class="input-field" name="nickname" placeholder="닉네임을 알려주세요 💚">
+            <div class="button-group">
+                <button class="nav-button prev-button" onclick="prevSurvey()">나중에</button>
+                <button class="final-button" onclick="completeSurvey()">완료</button>
+            </div>
+        </div>
+    </div>
+    <audio id="aiAudio" preload="auto" playsinline></audio>
+    <script>
+        let currentSurvey = 1;
+        const totalSurveys = 6; // 완료 화면 포함
+        let audioContext = null;
+        let audioBuffer = null;
+        let isPlaying = false;
+        let currentModalType = null; // 'day' | 'month' | 'year' | null
+        let modalOpen = false; // 모달 열림 상태 락
+        
+        // 기본값 상수
+        const DEFAULT_BIRTH = { day: 15, month: 6, year: 1990 };
+
+        const audioUrls = [
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_1.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_gender.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_birth.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_style.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_survey_material.mp3",
+            "https://elasticbeanstalk-ap-northeast-2-967883357924.s3.ap-northeast-2.amazonaws.com/survey_tts/Hong+Jinkyung_nickname.mp3",
+        ];
+        let currentAudioIndex = 0;
+        const audioEl = document.getElementById('aiAudio');
+
+        // 각 wheel에 대한 프로그램적 스크롤 락
+        const wheelScrollLock = {
+            dayWheel: false,
+            monthWheel: false,
+            yearWheel: false,
+        };
+
+        function playAudio(index) {
+            if (index < 0 || index >= audioUrls.length) return;
+            audioEl.src = audioUrls[index];
+            audioEl.muted = false;
+            audioEl.play().then(() => {
+                showAudioVisualization();
+            });
+        }
+        audioEl.addEventListener('ended', () => {
+            hideAudioVisualization();
+        });
+
+        // 프로그램적으로 중앙에 맞추는 헬퍼
+        function centerItem(wheel, item) {
+            if (!wheel || !item) return;
+            // 락 ON
+            wheelScrollLock[wheel.id] = true;
+
+            const target = item.offsetTop - (wheel.clientHeight - item.clientHeight) / 2;
+
+            // ★ 프로그램 스크롤에서는 부드러운 스크롤 끄기
+            const prev = wheel.style.scrollBehavior;
+            wheel.style.scrollBehavior = 'auto';
+            wheel.scrollTop = Math.max(0, target);
+            wheel.style.scrollBehavior = prev || '';
+
+            console.log(`Centering item: ${item.textContent} in ${wheel.id}, scrollTop: ${target}`);
+
+            // ★ 충분히 기다렸다가 락 해제
+            setTimeout(() => { 
+                wheelScrollLock[wheel.id] = false; 
+                console.log(`Lock released for ${wheel.id}`);
+            }, 250);
+        }
+
+        // 음성 시각화 제어 함수
+        function showAudioVisualization() {
+            const visualizer = document.getElementById('audioVisualizer');
+            if (visualizer) {
+                visualizer.classList.remove('silent');
+                visualizer.classList.add('playing');
+                isPlaying = true;
+            }
+        }
+
+        function hideAudioVisualization() {
+            const visualizer = document.getElementById('audioVisualizer');
+            if (visualizer) {
+                visualizer.classList.remove('playing');
+                // silent 클래스 제거하여 기본 상태로 돌아감 (계속 움직임)
+                visualizer.classList.remove('silent');
+                isPlaying = false;
+            }
+        }
+
+        // 음성 재생 함수
+        function playWelcomeSound() {
+            try {
+                // Web Audio API를 사용한 간단한 음성 생성
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // 환영 인사 음성 시뮬레이션 (부드러운 톤)
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4 음
+                oscillator.frequency.setValueAtTime(523, audioContext.currentTime + 0.2); // C5 음
+                oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.4); // E5 음
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+                
+                // 음성 시각화 시작
+                showAudioVisualization();
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.6);
+                
+                // 음성 재생 완료 후 시각화 숨기기
+                setTimeout(() => {
+                    hideAudioVisualization();
+                }, 600);
+                
+                console.log('Welcome sound played with visualization');
+            } catch (error) {
+                console.log('Audio not available:', error);
+                // 오디오가 지원되지 않아도 시각화는 표시
+                showAudioVisualization();
+                setTimeout(() => {
+                    hideAudioVisualization();
+                }, 1000);
+            }
+        }
+
+        // Wheel 모달 관련 함수들
+        function openWheelModal(type) {
+            if (!['day','month','year'].includes(type) || modalOpen) return;
+            modalOpen = true;
+            currentModalType = type;
+
+            const modal = document.getElementById('wheelModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalOptions = document.getElementById('modalOptions');
+            const wheel = document.getElementById(type + 'Wheel');
+
+            const currentText = wheel.querySelector('.wheel-item.selected')?.textContent ?? '';
+            modalTitle.textContent =
+                type === 'day' ? `일 선택 (현재: ${currentText})` :
+                type === 'month' ? `월 선택 (현재: ${currentText})` :
+                `년도 선택 (현재: ${currentText})`;
+
+            modalOptions.innerHTML = '';
+            wheel.querySelectorAll('.wheel-item').forEach(item => {
+                const opt = document.createElement('div');
+                opt.className = 'modal-option';
+                opt.dataset.value = item.dataset.value;
+                opt.textContent = item.textContent;
+                if (item.classList.contains('selected')) opt.classList.add('selected');
+                opt.addEventListener('click', () => selectModalOption(opt));
+                modalOptions.appendChild(opt);
+            });
+
+            modal.classList.add('show');
+        }
+
+        function closeWheelModal() {
+            const modal = document.getElementById('wheelModal');
+            modal.classList.remove('show');
+            currentModalType = null;
+            modalOpen = false; // 모달 락 해제
+        }
+
+        function selectModalOption(opt) {
+            const value = opt.dataset.value; // 문자열
+            const wheel = document.getElementById(currentModalType + 'Wheel');
+            
+            // 모달 쪽 하이라이트
+            document.querySelectorAll('#modalOptions .modal-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            
+            // 실제 휠에 반영
+            setWheelSelection(wheel, value);
+            selectBirthDate();
+            
+            // 스크롤 반영이 보이도록 아주 살짝 지연 후 모달 닫기
+            setTimeout(closeWheelModal, 120);
+        }
+
+        function updateProgressBar() {
+            // 모든 progress segment에서 filled 클래스 제거
+            document.querySelectorAll('.progress-segment').forEach(segment => {
+                segment.classList.remove('filled');
+            });
+            
+            // 현재 survey에 맞게 filled 클래스 추가 (0단계부터 시작)
+            const currentCard = document.getElementById(`survey${currentSurvey}`) || document.getElementById('surveyComplete');
+            if (currentCard) {
+                const progressSegments = currentCard.querySelectorAll('.progress-segment');
+                // 현재 페이지 번호만큼 filled 클래스 추가 (0 → 1 → 2 → 3 → 4 → 5)
+                for (let i = 0; i < currentSurvey -1; i++) {
+                    if (progressSegments[i]) {
+                        progressSegments[i].classList.add('filled');
+                    }
+                }
+            }
+        }
+
+        function createConfetti() {
+            const surveyCard = document.querySelector('#surveyComplete');
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#00d2d3', '#ff9ff3', '#54a0ff'];
+            
+            if (!surveyCard) return;
+            
+            // survey-card의 위치와 크기 정보 가져오기
+            const cardRect = surveyCard.getBoundingClientRect();
+            const cardLeft = cardRect.left;
+            const cardWidth = cardRect.width;
+            const cardTop = cardRect.top;
+            const cardHeight = cardRect.height;
+            
+            // 잔잔한 파티클 개수로 조정 (양 늘림)
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // survey-card 영역 내에서만 랜덤하게 분산
+                const randomLeft = cardLeft + Math.random() * cardWidth;
+                const randomTop = cardTop + Math.random() * (cardHeight * 0.2); // 상단 20% 영역에서 시작
+                
+                confetti.style.position = 'fixed';
+                confetti.style.left = randomLeft + 'px';
+                confetti.style.top = randomTop + 'px';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.background = color;
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = '2s';
+                confetti.style.animationTimingFunction = 'ease-out';
+                
+                // 작고 잔잔한 크기
+                const size = Math.random() * 3 + 4; // 4px ~ 7px
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                
+                // 부드러운 모양 (원형 위주)
+                const shapes = ['border-radius: 50%', 'border-radius: 50%', 'border-radius: 0', 'border-radius: 50%'];
+                const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.cssText += randomShape;
+                
+                // 부드러운 글로우 효과
+                confetti.style.boxShadow = `0 0 4px ${color}60, 0 0 8px ${color}30`;
+                
+                document.body.appendChild(confetti);
+                
+                // 2.5초 후 파티클 제거
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
+                }, 2500);
+            }
+        }
+
+        function nextSurvey() {
+            console.log('nextSurvey called, currentSurvey:', currentSurvey, 'totalSurveys:', totalSurveys);
+            
+            // Survey 1은 선택 검증 없이 진행
+            if (currentSurvey === 1) {
+                console.log('Survey 1 next button clicked');
+                if (currentSurvey < totalSurveys) {
+                    console.log('Hiding survey1, showing survey2');
+                    
+                    // Survey1 숨기기
+                    const survey1 = document.getElementById('survey1');
+                    if (survey1) {
+                        survey1.classList.add('hidden');
+                        console.log('Survey1 hidden');
+                    }
+                    
+                    // currentSurvey 증가
+                    currentSurvey++;
+                    console.log('Current survey updated to:', currentSurvey);
+                    
+                    // Progress bar 업데이트
+                    updateProgressBar();
+                    
+                    if (currentSurvey === totalSurveys) {
+                        document.getElementById('surveyComplete').classList.remove('hidden');
+                        setTimeout(() => {
+                            createConfetti();
+                        }, 1000);
+                    } else {
+                        // Survey2 표시
+                        const survey2 = document.getElementById('survey2');
+                        if (survey2) {
+                            survey2.classList.remove('hidden');
+                            console.log('Survey2 shown');
+                        }
+                        updateNextButton(); // 새 페이지의 버튼 상태 업데이트
+                    }
+                }
+                return;
+            }
+            
+            // Survey 2-5: 선택 검증
+            const currentCard = document.querySelector('.survey-card:not(.hidden)');
+            const selectedOptions = currentCard.querySelectorAll('.option-button.selected');
+            const birthDate = currentCard.querySelector('#birthDate');
+            
+            // Survey3의 경우 date picker 검증
+            if (currentCard.id === 'survey3') {
+                if (!birthDate || !birthDate.value) {
+                    alert('생년월일을 선택해주세요!');
+                    return;
+                }
+            } else if (selectedOptions.length === 0) {
+                alert('옵션을 선택해주세요!');
+                return;
+            }
+            
+            if (currentSurvey < totalSurveys) {
+                // 현재 서베이 숨기기
+                document.getElementById(`survey${currentSurvey}`).classList.add('hidden');
+                
+                currentSurvey++;
+                
+                // progress bar 업데이트
+                updateProgressBar();
+                
+                // 다음 서베이 보이기
+                if (currentSurvey === totalSurveys) {
+                    document.getElementById('surveyComplete').classList.remove('hidden');
+                    playAudio(5);
+                    // 완료 페이지에서 폭죽 효과 시작
+                    setTimeout(() => {
+                        createConfetti();
+                    }, 1000);
+                } else {
+                    // Survey3로 진입할 때 FOUC 방지 처리
+                    if (currentSurvey === 3) {
+                        const s3 = document.getElementById('survey3');
+
+                        // 1) 먼저 block으로 만들되, 눈에는 안 보이게
+                        s3.classList.add('invisible');
+                        s3.classList.remove('hidden');
+
+                        // 2) 레이아웃이 잡힌 다음 기본값 중앙정렬 수행
+                        requestAnimationFrame(() => {
+                            initializeWheelPicker(); // 여기서 setWheelSelection + centerItem 실행
+
+                            // 3) 다음 프레임에 사용자에게 보여주기 (깜빡임 없음)
+                            requestAnimationFrame(() => {
+                                s3.classList.remove('invisible');
+                            });
+                        });
+
+                        updateNextButton();
+                    } else {
+                        document.getElementById(`survey${currentSurvey}`).classList.remove('hidden');
+                        updateNextButton(); // 새 페이지의 버튼 상태 업데이트
+                    }
+                    playAudio(currentSurvey - 1);
+                }
+            }
+        }
+
+        function getBirthday() {
+            const year  = document.querySelector("#yearWheel .wheel-item.selected").dataset.value;
+            const month = document.querySelector("#monthWheel .wheel-item.selected").dataset.value;
+            const day  = document.querySelector("#dayWheel .wheel-item.selected").dataset.value;
+            return `${year}-${month}-${day}`;
+        }
+
+        async function saveSurvey() {
+            const param     = {};
+            const $csrf     = document.getElementsByName("csrfmiddlewaretoken")[0];
+            const $selected = [...document.querySelectorAll(".option-button.selected")];
+            $selected.forEach((e,i) => {
+                let $parent = e.closest(".option-group");
+                let data_id = $parent.dataset.id;
+                let value   = e.dataset.value;
+                switch(data_id) {
+                    case "gender"   : param["gender"]          = value;              break;
+                    case "style"    : param["prefer"]          = value;              break;
+                    case "material" : param["prefer_material"] = value;              break;
+                }
+            })
+            const $nickname = document.getElementsByName("nickname")[0];
+            param["nickname"] = $nickname.value;
+            param["birthday"] = getBirthday();
+            const resp = await fetch("{% url "mainapp:survey" %}", {
+                method : "POST",
+                cache  : "no-cache",
+                headers: { "Content-Type": "application/json", "X-CSRFToken": $csrf.value },
+                body: JSON.stringify(param)
+            });
+            const json = await resp.json();
+            return json["status"];
+        }
+
+        function prevSurvey() {
+            // Survey Complete 페이지에서 "나중에" 버튼 클릭 시
+            if (currentSurvey === totalSurveys) {
+                const success = saveSurvey();
+                if( success ) {
+                    alert('닉네임은 프로필에서 언제든지 설정할 수 있어요! 😊');
+                    // OK 버튼 클릭 시 채팅 페이지로 이동
+                    window.location.href = '/chat';
+                } else {
+                    alert("페이지 새로 고침 후 다시 시도해주세요.");
+                }
+                return;
+            }
+            
+            if (currentSurvey > 1) {
+                // 현재 서베이 숨기기
+                    document.getElementById(`survey${currentSurvey}`).classList.add('hidden');
+                
+                currentSurvey--;
+                
+                // progress bar 업데이트
+                updateProgressBar();
+                
+                // 이전 서베이 보이기
+                if (currentSurvey === 3) {
+                    const s3 = document.getElementById('survey3');
+
+                    // 1) 먼저 block으로 만들되, 눈에는 안 보이게
+                    s3.classList.add('invisible');
+                    s3.classList.remove('hidden');
+
+                    // 2) 레이아웃이 잡힌 다음 기본값 중앙정렬 수행
+                    requestAnimationFrame(() => {
+                        initializeWheelPicker(); // 여기서 setWheelSelection + centerItem 실행
+
+                        // 3) 다음 프레임에 사용자에게 보여주기 (깜빡임 없음)
+                        requestAnimationFrame(() => {
+                            s3.classList.remove('invisible');
+                        });
+                    });
+
+                    updateNextButton(); // 이전 페이지의 버튼 상태 업데이트
+                } else {
+                    document.getElementById(`survey${currentSurvey}`).classList.remove('hidden');
+                    updateNextButton(); // 이전 페이지의 버튼 상태 업데이트
+                }
+            }
+        }
+
+        function selectBirthDate() {
+            // 생년월일이 선택되었을 때 처리
+            const dayValue = document.querySelector('#dayWheel .wheel-item.selected')?.dataset.value;
+            const monthValue = document.querySelector('#monthWheel .wheel-item.selected')?.dataset.value;
+            const yearValue = document.querySelector('#yearWheel .wheel-item.selected')?.dataset.value;
+            
+            if (dayValue && monthValue && yearValue) {
+                const dateString = `${yearValue}-${monthValue.padStart(2, '0')}-${dayValue.padStart(2, '0')}`;
+                const hiddenInput = document.getElementById('birthDate');
+                hiddenInput.value = dateString;
+                
+                console.log('Selected birth date:', dateString);
+                
+                // 다음 버튼 활성화를 위해 survey3의 다음 버튼 상태 업데이트
+                updateNextButton();
+            }
+        }
+
+        function initializeWheelPicker() {
+            const dayWheel = document.getElementById('dayWheel');
+            const monthWheel = document.getElementById('monthWheel');
+            const yearWheel = document.getElementById('yearWheel');
+            if (!(dayWheel && monthWheel && yearWheel)) return;
+
+            console.log('Initializing wheel picker with:', DEFAULT_BIRTH);
+
+            // 1) 초기 선택을 먼저 세팅(중앙정렬까지)
+            setWheelSelection(dayWheel, DEFAULT_BIRTH.day);
+            setWheelSelection(monthWheel, DEFAULT_BIRTH.month);
+            setWheelSelection(yearWheel, DEFAULT_BIRTH.year);
+
+            // 2) 그 다음 리스너 부착 (초기 스크롤에 의한 오버라이드 방지)
+            ['day', 'month', 'year'].forEach(type => {
+                const wheel = document.getElementById(type + 'Wheel');
+                if (wheel) addWheelListeners(wheel);
+            });
+
+            // 3) 히든 인풋 채우기 + 다음 버튼 활성화
+            selectBirthDate();
+            console.log('Wheel picker initialized with 15 / 6 / 1990');
+        }
+
+        function setWheelSelection(wheel, value) {
+            if (!wheel) return;
+            const target = String(value);
+            let matched = null;
+
+            console.log(`Setting wheel selection: ${wheel.id} = ${target}`);
+
+            wheel.querySelectorAll('.wheel-item').forEach(it => {
+                it.classList.remove('selected');
+                if (it.dataset.value === target) matched = it;
+            });
+
+            if (matched) {
+                matched.classList.add('selected');
+                console.log(`Selected item: ${matched.textContent} in ${wheel.id}`);
+                // 렌더가 끝난 다음 프레임에 정확히 중앙 정렬
+                requestAnimationFrame(() => centerItem(wheel, matched));
+            } else {
+                console.warn('No match in wheel for', target, 'in', wheel.id);
+            }
+        }
+
+        function addWheelListeners(wheel) {
+            const items = wheel.querySelectorAll('.wheel-item');
+            const wheelType = wheel.id.replace('Wheel', '');
+            
+            // 아이템 클릭/터치 - 선택 처리만
+            items.forEach(item => {
+                // 클릭 이벤트 - 선택 처리
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 컬럼 클릭 이벤트 방지
+                    setWheelSelection(wheel, this.dataset.value);
+                    selectBirthDate();
+                });
+                
+                // 터치 이벤트 (모바일) - 선택 처리
+                item.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); // 컬럼 터치 이벤트 방지
+                    setWheelSelection(wheel, this.dataset.value);
+                    selectBirthDate();
+                });
+            });
+            
+            // 컬럼 바탕 클릭/터치 - 모달 열기
+            wheel.addEventListener('click', function(e) {
+                // wheel-item이 아닌 바탕 영역 클릭 시에만 모달 열기
+                if (!e.target.classList.contains('wheel-item')) {
+                    if (['day', 'month', 'year'].includes(wheelType)) {
+                        openWheelModal(wheelType);
+                    }
+                }
+            });
+            
+            // 컬럼 바탕 터치 (모바일) - 모달 열기
+            wheel.addEventListener('touchstart', function(e) {
+                // wheel-item이 아닌 바탕 영역 터치 시에만 모달 열기
+                if (!e.target.classList.contains('wheel-item')) {
+                    e.preventDefault();
+                    if (['day', 'month', 'year'].includes(wheelType)) {
+                        openWheelModal(wheelType);
+                    }
+                }
+            });
+            
+            // 스크롤 이벤트로 선택 감지
+            wheel.addEventListener('scroll', function() {
+                // 프로그램적 스크롤 중이면 무시
+                if (wheelScrollLock[wheel.id]) return;
+
+                const centerY = this.offsetHeight / 2;
+                const items = this.querySelectorAll('.wheel-item');
+                
+                let closestItem = null;
+                let closestDistance = Infinity;
+                
+                items.forEach(item => {
+                    const itemRect = item.getBoundingClientRect();
+                    const wheelRect = this.getBoundingClientRect();
+                    const itemCenterY = itemRect.top + itemRect.height / 2 - wheelRect.top;
+                    const distance = Math.abs(itemCenterY - centerY);
+                    
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestItem = item;
+                    }
+                });
+                
+                if (closestItem && !closestItem.classList.contains('selected')) {
+                    // 사용자 스크롤일 때만 반영
+                    setWheelSelection(wheel, closestItem.dataset.value);
+                    selectBirthDate();
+                }
+            });
+        }
+
+        function selectOption(button) {
+            const optionGroup = button.parentElement;
+            const allButtons = optionGroup.querySelectorAll('.option-button');
+            const currentSurveyId = button.closest('.survey-card').id;
+
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+
+            /*
+            // Survey 2, 3: 단일 선택
+            if (currentSurveyId === 'survey2' || currentSurveyId === 'survey3') {
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+            }
+            // Survey 4, 5: 다중 선택
+            else if (currentSurveyId === 'survey4' || currentSurveyId === 'survey5') {
+                const buttonText = button.textContent.trim();
+
+                // "특별히 없음" 선택 시 다른 옵션들 비활성화
+                if (buttonText === '특별히 없음, 다양한 소재 좋아요') {
+                    if (button.classList.contains('selected')) {
+                        // 이미 선택된 상태면 선택 해제
+                        button.classList.remove('selected');
+                        allButtons.forEach(btn => {
+                            if (btn !== button) {
+                                btn.style.opacity = '1';
+                                btn.style.pointerEvents = 'auto';
+                            }
+                        });
+                    } else {
+                        // 선택
+                        allButtons.forEach(btn => {
+                            if (btn !== button) {
+                                btn.classList.remove('selected');
+                                btn.style.opacity = '0.5';
+                                btn.style.pointerEvents = 'none';
+                            }
+                        });
+            button.classList.add('selected');
+                    }
+                } else {
+                    // 다른 옵션 선택 시 "특별히 없음" 비활성화
+                    const specialButton = Array.from(allButtons).find(btn =>
+                        btn.textContent.trim() === '특별히 없음, 다양한 소재 좋아요'
+                    );
+
+                    if (specialButton && specialButton.classList.contains('selected')) {
+                        specialButton.classList.remove('selected');
+                        specialButton.style.opacity = '1';
+                        specialButton.style.pointerEvents = 'auto';
+                    }
+
+                    // 현재 버튼 토글
+                    button.classList.toggle('selected');
+                }
+            }
+            */
+
+            // 다음 버튼 활성화/비활성화 체크
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const currentCard = document.querySelector('.survey-card:not(.hidden)');
+            const nextButton = currentCard.querySelector('.next-button');
+            const selectedOptions = currentCard.querySelectorAll('.option-button.selected');
+            const birthDate = currentCard.querySelector('#birthDate');
+            
+            // survey1은 항상 버튼 활성화
+            if (currentCard.id === 'survey1') {
+                nextButton.disabled = false;
+                nextButton.style.opacity = '1';
+                nextButton.style.cursor = 'pointer';
+            }
+            // survey3의 경우 date picker 확인
+            else if (currentCard.id === 'survey3' && birthDate) {
+                if (birthDate.value) {
+                    nextButton.disabled = false;
+                    nextButton.style.opacity = '1';
+                    nextButton.style.cursor = 'pointer';
+                } else {
+                    nextButton.disabled = true;
+                    nextButton.style.opacity = '0.5';
+                    nextButton.style.cursor = 'not-allowed';
+                }
+            } else if (selectedOptions.length > 0) {
+                nextButton.disabled = false;
+                nextButton.style.opacity = '1';
+                nextButton.style.cursor = 'pointer';
+            } else {
+                nextButton.disabled = true;
+                nextButton.style.opacity = '0.5';
+                nextButton.style.cursor = 'not-allowed';
+            }
+        }
+
+        function completeSurvey() {
+            const nickname = document.querySelector('.input-field').value.trim();
+            if (nickname) {
+                const success = saveSurvey();
+                if( success ) {
+                    alert(`${nickname}님, 환영합니다! 이제 맞춤 스타일 추천을 받아보세요! 🎉`);
+                    // OK 버튼 클릭 시 채팅 페이지로 이동
+                    window.location.href = '/chat';
+                } else {
+                    alert("페이지 새로 고침 후 다시 시도해주세요.");
+                }
+            } else {
+                alert('닉네임을 입력해주세요! 😊');
+            }
+        }
+
+
+        // Enter 키로 다음 단계 이동
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (currentSurvey === totalSurveys) {
+                    completeSurvey();
+                } else {
+                    nextSurvey();
+                }
+            }
+        });
+
+        // 닉네임 입력 필드에서 Enter 키 이벤트
+        document.addEventListener('keypress', function(e) {
+            if (e.target.classList.contains('input-field') && e.key === 'Enter') {
+                completeSurvey();
+            }
+        });
+
+        // 페이지 로드 시 초기 상태 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // Survey 2-5의 다음 버튼은 초기에 비활성화
+            for (let i = 2; i <= 5; i++) {
+                const nextButton = document.querySelector(`#survey${i} .next-button`);
+                if (nextButton) {
+                    nextButton.disabled = true;
+                    nextButton.style.opacity = '0.5';
+                    nextButton.style.cursor = 'not-allowed';
+                }
+            }
+            
+            
+            // 초기 progress bar 설정 (0단계부터 시작)
+            updateProgressBar();
+            
+            // 초기 음성 시각화 상태 설정 (기본 상태 - 계속 움직임)
+            const visualizer = document.getElementById('audioVisualizer');
+            if (visualizer) {
+                visualizer.classList.remove('playing', 'silent');
+                isPlaying = false;
+            }
+            
+            // Survey1 next button 이벤트 리스너 추가
+            const survey1NextButton = document.getElementById('survey1NextBtn');
+            if (survey1NextButton) {
+                console.log('Survey1 next button found by ID:', survey1NextButton);
+                
+                // Survey 1의 다음 버튼은 항상 활성화
+                survey1NextButton.disabled = false;
+                survey1NextButton.style.opacity = '1';
+                survey1NextButton.style.cursor = 'pointer';
+                
+                survey1NextButton.addEventListener('click', function(e) {
+                    console.log('Survey1 next button clicked - moving to survey2');
+                    e.preventDefault();
+                    
+                    // 즉시 survey1 숨기고 survey2 표시
+                    const survey1 = document.getElementById('survey1');
+                    const survey2 = document.getElementById('survey2');
+                    
+                    if (survey1 && survey2) {
+                        survey1.classList.add('hidden');
+                        survey2.classList.remove('hidden');
+                        currentSurvey = 2;
+                        updateProgressBar();
+                        updateNextButton();
+                        console.log('Successfully moved from survey1 to survey2');
+
+                        playAudio(1);
+                    }
+                });
+            } else {
+                console.log('Survey1 next button not found by ID');
+            }
+            
+            // 페이지 진입 시 음성 자동재생 (사용자 상호작용 후)
+            setTimeout(() => {
+               playAudio(0);
+            }, 500);
+            
+            // 모달 외부 클릭 시 모달 닫기
+            const wheelModal = document.getElementById('wheelModal');
+            if (wheelModal) {
+                wheelModal.addEventListener('click', function(e) {
+                    if (e.target === wheelModal) {
+                        closeWheelModal();
+                    }
+                });
+            }
+            
+            // 모달 닫기 버튼 이벤트
+            const modalClose = document.querySelector('.modal-close');
+            if (modalClose) {
+                modalClose.addEventListener('click', closeWheelModal);
+            }
+            
+            // 페이지가 곧바로 survey3 상태로 열릴 때도 FOUC 방지
+            const s3 = document.getElementById('survey3');
+            if (s3 && !s3.classList.contains('hidden')) {
+                s3.classList.add('invisible'); // 먼저 가리기
+                requestAnimationFrame(() => {
+                    initializeWheelPicker();     // 중앙 정렬
+                    requestAnimationFrame(() => {
+                        s3.classList.remove('invisible'); // 보이기
+                    });
+                });
+            }
+            
+        });
+    </script>
+</body>
+</html>

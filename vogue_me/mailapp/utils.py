@@ -17,7 +17,7 @@ def send_mail(to, title, content:str) -> None:
     if not content: raise ValueError("no_email_content")
 
     to    = to if isinstance(to, list) else [to]
-    email = EmailMessage(title, content, f'"[SuPe]" <{settings.EMAIL_HOST_USER}>', to)
+    email = EmailMessage(title, content, f'"[LoopLabel]" <{settings.EMAIL_HOST_USER}>', to)
     email.content_subtype = "html"
     email.send()
 

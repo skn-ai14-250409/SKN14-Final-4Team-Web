@@ -1,0 +1,775 @@
+<style>
+    :root {
+        --primary-color: #20A090;
+        --white: #ffffff;
+        --dark-text: #0B1220;
+        --gray-text: #797C7B;
+        --input-active: #667085;
+        --input-inactive: #D8DADC;
+        --input-search: #D8DADC;
+        --input-message: #F3F6F6;
+        --cta-btn: #20A090;
+        --cta-hover: #00b894;
+        --check-btn: #3DC7B0;
+        --chat-active: #2BEF83;
+        --env-icon: #F4D35E;
+        --star-btn: #FFB84D;
+        --heart-btn: #EF4444;
+    }
+
+    * {
+        font-family: "Pretendard Variable", Pretendard;
+    }
+
+    body {
+        background-color: var(--white);
+        color: var(--dark-text);
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-container {
+        max-width: 500px;
+        margin: 0 auto;
+        position: relative;
+        min-height: 100vh;
+        background: #fff;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    .navbar-custom {
+        background-color: var(--primary-color);
+        padding: 1rem 0;
+        border-bottom: none;
+    }
+
+    .navbar-custom .navbar-brand {
+        color: var(--white) !important;
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .tab-navigation {
+        background-color: var(--white);
+        border-bottom: 1px solid #e9ecef;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .nav-tabs {
+        border-bottom: none;
+        justify-content: center;
+    }
+
+    .nav-tabs .nav-link {
+        color: var(--gray-text);
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        background-color: transparent;
+        border-bottom: 3px solid var(--primary-color);
+    }
+
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        color: var(--primary-color);
+        background-color: rgba(32, 160, 144, 0.1);
+    }
+
+    .tab-content-wrapper {
+        position: relative;
+        min-height: calc(100vh - 200px);
+    }
+
+    .tab-content-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.4s ease-in-out;
+    }
+
+    .tab-content-area.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        position: relative;
+    }
+
+    /* 좋아요 카드 스타일 */
+    .like-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .like-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .like-card img {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .like-card-body {
+        padding: 1rem;
+    }
+
+    .like-card-title {
+        color: var(--dark-text);
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .like-card-text {
+        color: var(--gray-text);
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .like-card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+    }
+
+    .like-card-author {
+        color: var(--gray-text);
+    }
+
+    .like-card-stats {
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .heart-btn {
+        color: var(--heart-btn);
+        border: none;
+        background: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .heart-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* 채팅 리스트 스타일 */
+    .chat-item {
+        padding: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .chat-item:hover {
+        background-color: #f8f9fa;
+        color: inherit;
+        text-decoration: none;
+        transform: translateX(5px);
+    }
+
+    .chat-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .chat-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .chat-status-active {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 12px;
+        height: 12px;
+        background-color: var(--chat-active);
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .chat-info {
+        flex: 1;
+    }
+
+    .chat-name {
+        font-weight: 600;
+        color: var(--dark-text);
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .chat-last-message {
+        color: var(--gray-text);
+        font-size: 0.85rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .chat-meta {
+        text-align: right;
+    }
+
+    .chat-time {
+        color: var(--gray-text);
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .chat-unread {
+        background-color: var(--heart-btn);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+    }
+
+    /* 프로필 스타일 */
+    .profile-header {
+        text-align: center;
+        padding: 2rem 0;
+        background: linear-gradient(135deg, var(--primary-color), var(--check-btn));
+        border-radius: 0 0 20px 20px;
+        margin: -1.5rem -1rem 2rem -1rem;
+        color: white;
+    }
+
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid white;
+        margin-bottom: 1rem;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-info {
+        background-color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+
+    .profile-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .profile-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-label {
+        color: var(--gray-text);
+        font-size: 0.9rem;
+    }
+
+    .profile-value {
+        color: var(--dark-text);
+        font-weight: 500;
+    }
+
+    .btn-edit {
+        background-color: var(--cta-btn);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit:hover {
+        background-color: var(--cta-hover);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* 폼 스타일 */
+    .form-control {
+        border: 2px solid var(--input-inactive);
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--input-active);
+        box-shadow: 0 0 0 0.2rem rgba(32, 160, 144, 0.25);
+    }
+
+    .form-label {
+        color: var(--gray-text);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-save {
+        background-color: var(--check-btn);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+        background-color: #35b3a0;
+        transform: translateY(-1px);
+    }
+
+    .btn-cancel {
+        background-color: transparent;
+        border: 2px solid var(--input-inactive);
+        color: var(--gray-text);
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--gray-text);
+        color: var(--dark-text);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: var(--input-inactive);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--gray-text);
+        font-size: 0.95rem;
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+        .app-container {
+            max-width: 100%;
+            box-shadow: none;
+        }
+
+        .profile-header {
+            padding: 1.5rem 0;
+        }
+
+        .profile-name {
+            font-size: 1.3rem;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .like-card {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    /* 로딩 애니메이션 */
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--input-inactive);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="app-container">
+    <nav class="navbar navbar-custom">
+        <div class="container">
+            <span class="navbar-brand">마이페이지</span>
+        </div>
+    </nav>
+
+    <div class="tab-navigation mypage-tabs">
+        <div class="container">
+            <ul class="nav nav-tabs" id="mypageTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" data-tab="profile">
+                        <i class="fas fa-user me-1"></i>내 정보
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="likes">
+                        <i class="fas fa-heart me-1"></i>좋아요
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-tab="chats">
+                        <i class="fas fa-comments me-1"></i>대화
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container tab-content-wrapper mypage-content">
+        <!-- 프로필 탭 -->
+        <div id="profile-content" class="tab-content-area active">
+            <div id="profile-view">
+                <!-- 조회 모드 -->
+                <div class="profile-header">
+                    <img src="{{ user.member.photo_url }}" alt="프로필 이미지" class="profile-image">
+                    <div class="profile-name">{{ user.first_name }}{{ user.last_name }}</div>
+                    <small style="opacity: 0.8;">{{ user.member.agae }}세 · {{ user.member.gender }}</small>
+                </div>
+
+                <div class="profile-info">
+                    <div class="profile-item">
+                        <span class="profile-label">이름</span>
+                        <span class="profile-value">{{ user.first_name }}{{ user.last_name }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">나이</span>
+                        <span class="profile-value">{{ user.member.age }}세</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">성별</span>
+                        <span class="profile-value">{{ user.member.gender }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">생일</span>
+                        <span class="profile-value">{{ user.member.birthday }}</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">선호 스타일</span>
+                        <span class="profile-value">{{ user.member.prefer }}</span>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-edit" onclick="toggleEditMode(true)">
+                        <i class="fas fa-edit me-2"></i>프로필 수정
+                    </button>
+                </div>
+            </div>
+
+            <div id="profile-edit" style="display: none;">
+                <!-- 수정 모드 -->
+                <div class="profile-header">
+                    <img src="{{ user.member.photo_url }}" alt="프로필 이미지" class="profile-image">
+                    <div class="profile-name">프로필 수정</div>
+                </div>
+
+                <form method="post" action="{% url "userapp:profile_edit" %}">
+                    {% csrf_token %}
+                    <div class="profile-info">
+                        <div class="mb-3">
+                            <label for="last_name" class="form-label">성</label>
+                            <input type="text" class="form-control" id="last_name" value="{{ user.last_name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="first_name" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gender" class="form-label">성별</label>
+                            <select class="form-control" id="gender">
+                                <option value="남성" selected>남성</option>
+                                <option value="여성">여성</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="birthday" class="form-label">생일</label>
+                            <input type="date" class="form-control" id="birthday" value="{{ user.member.birthday|date:"Y-m-d" }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="stylePreference" class="form-label">선호하는 룩 스타일</label>
+                            <select class="form-control" id="stylePreference">
+                                <option value="친환경 캐주얼" selected>친환경 캐주얼</option>
+                                <option value="지속가능 포멀">지속가능 포멀</option>
+                                <option value="에코 스트릿">에코 스트릿</option>
+                                <option value="오가닉 미니멀">오가닉 미니멀</option>
+                                <option value="업사이클 로맨틱">업사이클 로맨틱</option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <input type="reset" class="btn btn-cancel me-md-2" onclick="toggleEditMode(false)" value="취소">
+                            <input type="submit" class="btn btn-save" value="저장">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- 좋아요 탭 -->
+        <div id="likes-content" class="tab-content-area">
+            <h5 class="mb-3" style="color: var(--dark-text); font-weight: 600;">좋아요한 게시글</h5>
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="card like-card">
+                        <img src="https://via.placeholder.com/300x200/20A090/ffffff?text=OOTD" class="card-img-top" alt="오늘의 OOTD">
+                        <div class="like-card-body">
+                            <h6 class="like-card-title">오늘의 친환경 OOTD 공유해요!</h6>
+                            <p class="like-card-text">재활용 소재로 만든 새 코트와 함께 찍은 사진이에요. 지속가능한 패션으로 스타일링했어요.</p>
+                            <div class="like-card-meta">
+                                <span class="like-card-author">에코패션러버</span>
+                                <div class="like-card-stats">
+                                    <button class="heart-btn" onclick="toggleLike(1)">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <span>42</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card like-card">
+                        <img src="https://via.placeholder.com/300x200/3DC7B0/ffffff?text=Style" class="card-img-top" alt="겨울 룩북">
+                        <div class="like-card-body">
+                            <h6 class="like-card-title">친환경 겨울 룩북 추천</h6>
+                            <p class="like-card-text">따뜻하면서도 지속가능한 겨울 코디 모음. 리사이클 울과 오가닉 코튼으로 만든 아이템들로 구성했어요.</p>
+                            <div class="like-card-meta">
+                                <span class="like-card-author">그린스타일리스트</span>
+                                <div class="like-card-stats">
+                                    <button class="heart-btn" onclick="toggleLike(2)">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <span>38</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card like-card">
+                        <img src="https://via.placeholder.com/300x200/F4D35E/ffffff?text=Eco" class="card-img-top" alt="업사이클링">
+                        <div class="like-card-body">
+                            <h6 class="like-card-title">업사이클링 데님 리메이크</h6>
+                            <p class="like-card-text">버려질 뻔한 청바지를 멋진 가방으로 변신시켰어요. DIY 업사이클링 과정을 공유합니다.</p>
+                            <div class="like-card-meta">
+                                <span class="like-card-author">제로웨이스트메이커</span>
+                                <div class="like-card-stats">
+                                    <button class="heart-btn" onclick="toggleLike(3)">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                    <span>56</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 대화 탭 -->
+        <div id="chats-content" class="tab-content-area">
+            <h5 class="mb-3" style="color: var(--dark-text); font-weight: 600;">대화 목록</h5>
+            <div class="list-group list-group-flush">
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/20A090/ffffff?text=AI" alt="환경 AI">
+                        <div class="chat-status-active"></div>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">환경 스타일 AI</div>
+                        <div class="chat-last-message">친환경 코디 추천해드릴게요! 어떤 스타일을 원하시나요?</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">오후 3:30</div>
+                        <div class="chat-unread">1</div>
+                    </div>
+                </div>
+
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/3DC7B0/ffffff?text=K" alt="김민수">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">김민수</div>
+                        <div class="chat-last-message">재활용 소재 옷 정보 감사해요! 정말 도움됐어요.</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">오전 11:20</div>
+                    </div>
+                </div>
+
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/F4D35E/ffffff?text=L" alt="이지은">
+                        <div class="chat-status-active"></div>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">이지은</div>
+                        <div class="chat-last-message">내일 친환경 쇼핑몰 같이 갈까요?</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">어제</div>
+                        <div class="chat-unread">3</div>
+                    </div>
+                </div>
+
+                <div class="chat-item">
+                    <div class="chat-avatar">
+                        <img src="https://via.placeholder.com/50x50/FFB84D/ffffff?text=P" alt="박서준">
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-name">박서준</div>
+                        <div class="chat-last-message">업사이클링 워크숍 후기 궁금해요</div>
+                    </div>
+                    <div class="chat-meta">
+                        <div class="chat-time">2일 전</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 탭 전환 기능
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.mypage-tabs .nav-link');
+        const tabContents = document.querySelectorAll('.mypage-content > .tab-content-area');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+
+                // 모든 탭 버튼 비활성화
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+
+                // 모든 탭 콘텐츠 숨기기
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                // 선택된 탭 활성화
+                this.classList.add('active');
+
+                // 선택된 콘텐츠 보이기
+                setTimeout(() => {
+                    const targetContent = document.getElementById(`${targetTab}-content`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                }, 200);
+            });
+        });
+    });
+
+    // 좋아요 토글 기능
+    function toggleLike(postId) {
+        const heartBtn = event.target.closest('.heart-btn');
+        const icon = heartBtn.querySelector('i');
+        const isLiked = icon.classList.contains('fas');
+
+        if (isLiked) {
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            heartBtn.style.color = 'var(--gray-text)';
+        } else {
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            heartBtn.style.color = 'var(--heart-btn)';
+        }
+
+        // 실제 API 호출은 여기서 수행
+        console.log(`Post ${postId} 좋아요 토글됨`);
+    }
+
+    // 프로필 편집 모드 토글
+    function toggleEditMode(isEdit) {
+        const viewMode = document.getElementById('profile-view');
+        const editMode = document.getElementById('profile-edit');
+
+        if (isEdit) {
+            viewMode.style.display = 'none';
+            editMode.style.display = 'block';
+        } else {
+            viewMode.style.display = 'block';
+            editMode.style.display = 'none';
+        }
+    }
+
+    {% if edit_mode %}toggleEditMode(true);{% endif %}
+</script>

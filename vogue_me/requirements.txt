@@ -91,3 +91,4 @@ zstandard==0.23.0
 boto3
 django-storages
 mysqlclient
+django-csp

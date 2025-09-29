@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>좋아요 - Likes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #000;
+            overflow-x: hidden;
+        }
+
+        .container {
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .signal-icons {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: #ffffff;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+            color: #000;
+            padding: 0;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .likes-grid {
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .like-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .desc-overlay {
+            position:absolute;
+            left:0;
+            right:0;
+            bottom:0;
+            background: rgba(0,0,0,0.45);
+            color: #fff;
+            padding: 18px 12px 26px 12px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        .desc-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .desc-body {
+            font-size: 14px;
+            line-height: 1.44;
+            word-break: keep-all;
+        }
+        .desc-date {
+            position: absolute;
+            bottom: 1px;
+            right: 15px;
+            font-size:10px;
+            color: #fafafa;
+            opacity: 0.75;
+            font-family: 'Menlo', 'Consolas', monospace;
+        }
+
+        .like-item:active {
+            transform: scale(0.98);
+        }
+
+        .like-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff3040;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .heart-icon:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        .heart-icon.liked {
+            color: #ff3040;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8E8E93;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .empty-desc {
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        /* 이미지 플레이스홀더 스타일 */
+        .placeholder-img {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            border-radius: 12px;
+        }
+
+        .placeholder-img.style1 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .placeholder-img.style2 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .placeholder-img.style3 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .placeholder-img.style4 {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        /* 모달 스타일 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 767px) {
+            body {
+                padding: 0;
+            }
+            
+            .container {
+                width: 100vw;
+                max-width: none;
+                height: 100vh;
+                max-height: none;
+                margin: 0;
+            }
+        }
+
+        /* 태블릿 */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 400px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 420px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">‹</button>
+            <div class="header-title">좋아요</div>
+        </div>
+
+        {% if liked_styles %}
+        <div class="likes-grid" id="likesGrid">
+            <!-- 좋아요 표시한 이미지들이 여기에 표시됩니다 -->
+            {% for style in liked_styles %}
+                <div class="like-item" onclick="openModal(this)" data-id="{{ style.id }}">
+                    <img class="dummy-img" src="{{ style.look_img_url }}" alt="{{ style.look_style}}">
+                    <div class="desc-overlay">
+                        <div class="desc-title">{{ style.look_style }}</div>
+                        <div class="desc-body">{{ style.look_desc }}</div>
+                        <div class="desc-date">{{ style.liked_at }}</div>
+                    </div>
+                    <div class="heart-icon liked" onclick="toggleLike(event, this)">❤️</div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- 빈 상태 표시 (좋아요한 항목이 없을 때) -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">💙</div>
+            <div class="empty-title">아직 좋아요한 항목이 없어요</div>
+            <div class="empty-desc">채팅에서 마음에 드는 스타일을<br>좋아요 표시해보세요</div>
+        </div>
+        {% endif %}
+
+        <!-- 이미지 확대 모달 -->
+        <div class="modal-overlay" id="imageModal">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-image" id="modalImage"></div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+
+    <script>
+        function goBack() {
+            top.location.href = '/chat';
+        }
+
+        function toggleLike(event, $heartIcon) {
+            event.stopPropagation(); // 이미지 클릭 이벤트와 분리
+
+            const $likesGrid = $heartIcon.closest(".like-item");
+            const look_id    = $likesGrid.dataset.id;
+            fetch(`/api/like/${look_id}`)
+                .then(resp => resp.json())
+                .then(json => {
+                    let like = json["like"];
+                    _toggleHeart($heartIcon, like);
+                    $likesGrid.style.transform = 'scale(0)';
+                    $likesGrid.style.opacity = '0';
+
+                    setTimeout(() => {
+                        $likesGrid.remove();
+                        checkEmptyState();
+                    }, 300);
+                });
+        }
+        function _toggleHeart($heartIcon, isLike) {
+            if( isLike ) {
+                // 좋아요 설정 (회색 → 빨간)
+                $heartIcon.classList.remove('unliked');
+                $heartIcon.classList.add('liked');
+                $heartIcon.textContent = '❤️';
+            } else {
+                // 좋아요 해제 (빨간 → 회색)
+                $heartIcon.classList.remove('liked');
+                $heartIcon.classList.add('unliked');
+                $heartIcon.textContent = '🤍';
+            }
+        }
+
+        function openModal(element) {
+            {#const modal      = document.getElementById('imageModal');#}
+            {#const modalImage = document.getElementById('modalImage');#}
+            const id         = element.getAttribute('data-id');
+            window.location.href = `/detail/${id}`;
+            {#// 클릭한 이미지의 내용을 모달에 복사#}
+            {#const imageContent   = element.querySelector('img, .placeholder-img');#}
+            {#modalImage.innerHTML = imageContent ? imageContent.outerHTML : '';#}
+            {##}
+            {#modalImage.innerHTML += `<a href="/detail/${id}" class="detail-link">상세페이지 이동</a>`;#}
+            {#modal.classList.add('active');#}
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+        }
+
+        function checkEmptyState() {
+            const grid = document.getElementById('likesGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (grid.children.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // 터치 피드백
+        document.querySelectorAll('.like-item').forEach(item => {
+            item.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            item.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -52,38 +52,3 @@ jobs:
           region: ap-northeast-2
           version_label: "app-${{ github.sha }}-run${{ github.run_number }}"
           deployment_package: Dockerrun.aws.json
-
-  migrate:
-    runs-on: ubuntu-latest
-    needs: build-deploy   # 배포 완료 후 실행됨
-    steps:
-      - name: ✅ Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.12
-
-      - name: ♻️ Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: 📦 Install dependencies
-        run: pip install -r ./vogue_me/requirements.txt
-
-      - name: 🛠️ Run migrations
-        env:
-          DJANGO_SETTINGS_MODULE: vogue_me.settings
-          DB_MIGRATER_PASSWORD: ${{ secrets.DB_MIGRATER_PASSWORD }}
-          DJANGO_ENV: migrater
-        run: |
-          echo "==================== Make-migrations ===================="
-          python vogue_me/manage.py makemigrations --noinput
-          echo 
-          echo "======================== Migrate ========================"
-          python vogue_me/manage.py migrate --noinput
