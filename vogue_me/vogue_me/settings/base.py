@@ -29,6 +29,7 @@ INSTALLED_APPS  = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    "csp",
 
     "mainapp",
     "userapp",
@@ -43,6 +44,7 @@ MIDDLEWARE      = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 TEMPLATES       = [
     {
@@ -60,10 +62,17 @@ TEMPLATES       = [
         },
     },
 ]
-DATABASES       = {
+DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("MYSQL_DATABASE", "20250901_looplabel"),   # DB 이름
+        'USER': os.getenv("MYSQL_USER", "admin"),              # DB 유저
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': os.getenv("MYSQL_HOST", "database-1.c386wgw8g00f.ap-northeast-2.rds.amazonaws.com"),
+        'PORT': os.getenv("MYSQL_PORT", "3306"),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -95,6 +104,37 @@ CSRF_TRUSTED_ORIGINS = [
     "http://*.looplabel.site",
     "https://*.looplabel.site",
 ]
+
+# CSP 정책 설정
+CSP_POLICY = {
+    'default-src': ["'self'"],
+
+    'frame-src': [
+        "'self'",
+        'https://www.youtube.com',
+        'https://www.youtube-nocookie.com',
+    ],
+
+    'script-src': [
+        "'self'",
+        "'unsafe-inline'",
+        'https://www.youtube.com',
+        'https://s.ytimg.com',
+        'https://www.youtube-nocookie.com',
+    ],
+
+    'img-src': [
+        "'self'",
+        'https://i.ytimg.com',
+        'https://www.youtube.com',
+    ],
+
+    'media-src': [
+        'https://www.youtube.com',
+        'https://www.youtube-nocookie.com',
+    ],
+}
+
 
 # 정적 파일 ###########################################
 STATIC_URL = 'static/'
@@ -129,3 +169,5 @@ EMAIL_PORT = 465  # Or your SMTP port (e.g., 465 for SSL)
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")

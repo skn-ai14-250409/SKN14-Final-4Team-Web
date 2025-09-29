@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="ko">
 <head>
     {% include "layout/meta.html" %}
@@ -193,6 +194,7 @@
             overflow-x: hidden;
             min-height: 0;
             flex: 1;
+            scroll-behavior: smooth;
         }
 
         .welcome-container {
@@ -1056,6 +1058,48 @@
             font-size: 15px;
             margin-right: 10px;
         }
+
+        #shorts {
+            display: none;
+            overflow-x: auto;
+            white-space: nowrap;
+            width: 100%;
+        }
+        #shorts > div {
+          display:inline-block;
+          margin-right:5px;
+        }
+        #shorts iframe {
+          border:0;
+        }
+        .shorts-container {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0 20px 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd transparent;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .shorts-container > div {
+            flex: 0 0 auto;
+            width: 180px; /* 카드 폭 */
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .shorts-container iframe {
+            width: 100%;
+            height: 320px; /* Shorts 세로 비율 */
+            border: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -1233,13 +1277,18 @@
             <!-- Typing Indicator -->
             <div class="typing-indicator" id="typingIndicator">
                 <div class="typing-bubble">
-                    <span id="waiting-ment"></span>
+                    <span id="waiting-ment">답변을 준비하는 동안, 쇼츠 영상을 즐겨보세요.</span>
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
+                    <!--기존 숏츠 있던 자리-->
                 </div>
+                <!--변경된 숏츠 자리-->
             </div>
+            <div id="shorts" class="shorts-container"></div>
+
         </div>
+
 
         <!-- Input Area -->
         <div class="input-area" onclick="closeInfluencerPanel()">
@@ -1261,6 +1310,19 @@
         </div>
     </div>
 
+    <script src="{% static "js/chat.js" %}"></script>
+    <script>
+        const $shorts   = document.getElementById("shorts");
+        const channels  = {
+            "1" : "UCkxbPwdaV74Erdxt97Nt23w",
+            "2" : "UCw-kXdzxMdMdLNI0ZlFFbmA",
+            "3" : "UCkvh3vrWsoi_cd7HyiikzIQ",
+            "4" : "UC_w6vBBczYwQ-4hCwgqWW9w",
+        };
+        const channelId = channels["{{ last_ai.id }}"];
+        const youtube   = new Youtube("AIzaSyBs5WVEtocaAYuziY8TnDlnhwAUYbgqTdM", $shorts);
+        window.showShorts = youtube;
+    </script>
     <script>
         function autoPlayLastAudio() {
             if (!globalVoiceEnabled) return;
@@ -1383,6 +1445,7 @@
             }
         }
 
+        /*
         const $mentWindow = document.getElementById("waiting-ment")
         let waiting_interval;
         function waitingMent() {
@@ -1420,18 +1483,23 @@
                 }
             }, 5000);
         }
+        */
 
         // 타이핑 인디케이터 표시/숨김
         function showTypingIndicator() {
             document.getElementById('typingIndicator').classList.add('show');
+            {#waitingMent();#}
+            youtube(channelId)
             scrollToBottom();
-
-            waitingMent();
+            setTimeout(scrollToBottom, 1000);
         }
 
         function hideTypingIndicator() {
             document.getElementById('typingIndicator').classList.remove('show');
-            clearInterval(waiting_interval);
+            document.getElementById('shorts').style.display = 'none';
+            {#clearInterval(waiting_interval);#}
+            {#$mentWindow.textContent = "";#}
+            document.getElementById("shorts").innerHTML = "";
         }
 
         // 스크롤을 최하단으로
@@ -1662,6 +1730,7 @@
             phone.classList.add('sidebar-open');   // 배경 스크롤 잠금
         }
 
+
         function closeSidebar() {
             const sidebar = document.getElementById('sidebarMenu');
             const overlay = document.getElementById('sidebarOverlay');
@@ -1860,6 +1929,8 @@
             initHeartIcon();
         });
         scrollToBottom();
+
+
     </script>
 </body>
 </html>
