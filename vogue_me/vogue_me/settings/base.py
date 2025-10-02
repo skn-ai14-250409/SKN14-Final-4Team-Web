@@ -64,15 +64,8 @@ TEMPLATES       = [
 ]
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("MYSQL_DATABASE", "20250901_looplabel"),   # DB 이름
-        'USER': os.getenv("MYSQL_USER", "admin"),              # DB 유저
-        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
-        'HOST': os.getenv("MYSQL_HOST", "database-1.c386wgw8g00f.ap-northeast-2.rds.amazonaws.com"),
-        'PORT': os.getenv("MYSQL_PORT", "3306"),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
